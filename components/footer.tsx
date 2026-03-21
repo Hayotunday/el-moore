@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="bg-primary text-primary-foreground">
+    <footer className="bg-primary text-primary-foreground flex items-center justify-center">
       <div className="container py-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
           <h3 className="text-lg font-bold">El-Moore Real Estate</h3>

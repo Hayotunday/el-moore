@@ -24,16 +24,16 @@ export default function Lobby() {
   const featured = properties.slice(0, 2);
 
   return (
-    <div>
+    <div className="relative flex flex-col items-center justify-center">
       {/* Hero */}
-      <section className="relative h-[85vh] min-h-150 flex items-end overflow-hidden">
+      <section className="relative h-[85vh] min-h-150 w-full flex items-end overflow-hidden">
         <img
           src={"assets/hero-bg.jpg"}
           alt="Luxury property"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-linear-to-t from-primary/90 via-primary/40 to-transparent" />
-        <div className="container relative z-10 pb-16 space-y-8">
+        <div className="container relative z-10 md:pl-10 pb-16 space-y-8">
           <motion.h1
             className="text-4xl md:text-6xl font-bold text-primary-foreground leading-[1.05]"
             initial={{ opacity: 0, y: 24 }}
@@ -66,7 +66,7 @@ export default function Lobby() {
                 />
               </div>
             </div>
-            <div className="p-4 flex items-center gap-2">
+            <div className="p-4 flex md:flex-col items-center justify-start gap-2">
               <label className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mr-2 whitespace-nowrap">
                 Investment Strategy
               </label>

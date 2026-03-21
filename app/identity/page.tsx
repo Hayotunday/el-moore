@@ -5,9 +5,9 @@ import { teamMembers } from "@/lib/mockData";
 
 export default function Identity() {
   return (
-    <div>
+    <div className="flex flex-col items-center">
       {/* Hero */}
-      <section className="container py-16">
+      <section className="container p-16">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <ScrollReveal>
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-2">
@@ -15,8 +15,7 @@ export default function Identity() {
             </p>
             <h1 className="text-4xl md:text-5xl font-bold leading-[1.05] mb-6">
               Building Wealth Through{" "}
-              <em className="not-italic font-bold italic">Curated</em> Real
-              Estate
+              <em className="font-bold italic">Curated</em> Real Estate
             </h1>
             <p className="text-muted-foreground mb-8 max-w-md">
               We don't just broker land; we curate portfolios. El-Moore is a
@@ -33,7 +32,7 @@ export default function Identity() {
             </div>
           </ScrollReveal>
           <ScrollReveal direction="right">
-            <div className="rounded-xl overflow-hidden aspect-[4/3]">
+            <div className="rounded-xl overflow-hidden aspect-4/3">
               <img
                 src={"assets/identity-hero.jpg"}
                 alt="El-Moore HQ"
@@ -45,7 +44,7 @@ export default function Identity() {
       </section>
 
       {/* Heritage */}
-      <section className="container py-20">
+      <section className="container p-20">
         <ScrollReveal>
           <h2 className="text-2xl font-bold mb-1">Our Heritage</h2>
           <div className="w-16 h-0.5 bg-gold mb-12" />
@@ -80,7 +79,7 @@ export default function Identity() {
             </div>
           </ScrollReveal>
           <ScrollReveal direction="right">
-            <div className="rounded-xl overflow-hidden aspect-[4/3]">
+            <div className="rounded-xl overflow-hidden aspect-4/3">
               <img
                 src={"assets/property-1.jpg"}
                 alt="Heritage"
@@ -92,7 +91,7 @@ export default function Identity() {
       </section>
 
       {/* Team */}
-      <section className="container py-20">
+      <section className="container p-20">
         <ScrollReveal>
           <h2 className="text-2xl font-bold mb-2">The Curators</h2>
           <p className="text-sm text-muted-foreground mb-10 max-w-lg">
@@ -125,7 +124,7 @@ export default function Identity() {
       </section>
 
       {/* Certifications */}
-      <section className="container py-12">
+      <section className="container p-12">
         <ScrollReveal>
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-t border-b border-border py-8">
             <div>
@@ -156,7 +155,7 @@ export default function Identity() {
 
       {/* CTA */}
       <section className="bg-cream">
-        <div className="container py-20 text-center">
+        <div className="container p-20 text-center">
           <ScrollReveal>
             <h2 className="text-3xl font-bold mb-4">
               Experience Personal Concierge Investment

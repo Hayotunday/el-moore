@@ -1,5 +1,7 @@
+"use client";
+
 import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -14,11 +16,21 @@ export default function ScrollReveal({
   delay = 0,
   direction = "up",
 }: ScrollRevealProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const directionMap = {
     up: { y: 16, x: 0 },
     left: { x: -16, y: 0 },
     right: { x: 16, y: 0 },
   };
+
+  if (!mounted) {
+    return <div className={className}>{children}</div>;
+  }
 
   return (
     <motion.div

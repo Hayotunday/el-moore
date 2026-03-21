@@ -16,7 +16,7 @@ export default function Helpdesk() {
     setForm((f) => ({ ...f, [field]: value }));
 
   return (
-    <div className="container py-12">
+    <div className="container p-12">
       <ScrollReveal>
         <p className="text-[10px] uppercase tracking-widest text-gold font-semibold mb-2">
           Concierge & Support

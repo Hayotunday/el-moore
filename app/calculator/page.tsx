@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   BarChart,
   Bar,
@@ -10,15 +11,24 @@ import {
   Tooltip,
 } from "recharts";
 import { TrendingUp, Download, Shield, Home } from "lucide-react";
-import ScrollReveal from "@/components/scroll-reveal";
 import { motion } from "framer-motion";
+import ScrollReveal from "@/components/scroll-reveal";
 
 const holdOptions = [1, 3, 5, 7, 10];
 const ANNUAL_RATE = 0.15;
 
-export default function Calculator() {
-  const [price, setPrice] = useState(75000000);
+function CalculatorContent() {
+  const searchParams = useSearchParams();
+  const initialPrice = searchParams.get("price")
+    ? parseInt(searchParams.get("price")!)
+    : 75000000;
+  const [price, setPrice] = useState(initialPrice);
   const [holdYears, setHoldYears] = useState(5);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const result = useMemo(() => {
     const futureValue = price * Math.pow(1 + ANNUAL_RATE, holdYears);
@@ -34,7 +44,7 @@ export default function Calculator() {
   const formatNGN = (n: number) => "₦" + n.toLocaleString();
 
   return (
-    <div className="container py-12">
+    <div className="container p-12 min-w-full">
       <div className="grid lg:grid-cols-2 gap-12 items-start">
         {/* Left: Inputs */}
         <ScrollReveal>
@@ -99,6 +109,13 @@ export default function Calculator() {
               <span className="text-muted-foreground">15% Fixed</span>
             </div>
           </div>
+
+          <div className="border-l-4 border-gold p-6 flex-1 mt-5 bg-gray-200">
+            <p className="italic">
+              "Real estate is the only asset class where time literally
+              manufacture wealth"
+            </p>
+          </div>
         </ScrollReveal>
 
         {/* Right: Results */}
@@ -140,38 +157,59 @@ export default function Calculator() {
             </div>
 
             <div className="h-48 mb-6">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={result.chartData}>
-                  <XAxis
-                    dataKey="year"
-                    tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <YAxis hide />
-                  <Tooltip
-                    formatter={(val: number) => formatNGN(val)}
-                    contentStyle={{
-                      background: "hsl(156,33%,8%)",
-                      border: "none",
-                      borderRadius: 8,
-                      color: "#fff",
-                    }}
-                  />
-                  <Bar
-                    dataKey="value"
-                    fill="hsl(44,33%,67%)"
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+              {isClient && (
+                <ResponsiveContainer
+                  width="100%"
+                  height="100%"
+                  minWidth={0}
+                  minHeight={0}
+                >
+                  <BarChart data={result.chartData}>
+                    <XAxis
+                      dataKey="year"
+                      tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 11 }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <YAxis hide />
+                    <Tooltip
+                      formatter={(value) => {
+                        if (typeof value === "number") {
+                          return formatNGN(value);
+                        }
+                        return value;
+                      }}
+                      contentStyle={{
+                        background: "hsl(156,33%,8%)",
+                        border: "none",
+                        borderRadius: 8,
+                        color: "#fff",
+                      }}
+                    />
+                    <Bar
+                      dataKey="value"
+                      fill="hsl(44,33%,67%)"
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </div>
 
             <div className="flex gap-3">
-              <button className="flex-1 flex items-center justify-center gap-2 bg-primary-foreground/10 border border-primary-foreground/20 rounded-md py-3 text-sm font-medium hover:bg-primary-foreground/20 transition-colors active:scale-[0.97]">
+              <button
+                className={`flex-1 flex items-center justify-center gap-2 bg-primary-foreground/10 
+                            border border-primary-foreground/20 rounded-md py-3 text-sm font-medium 
+                            hover:bg-primary-foreground/20 transition-colors active:scale-[0.97]`}
+              >
                 <TrendingUp className="h-4 w-4" /> Find Properties with this ROI
               </button>
-              <button className="flex items-center gap-2 bg-primary-foreground/10 border border-primary-foreground/20 rounded-md px-4 py-3 text-sm font-medium hover:bg-primary-foreground/20 transition-colors active:scale-[0.97]">
+              <button
+                className={`flex items-center gap-2 bg-primary-foreground/10 border 
+                            border-primary-foreground/20 rounded-md px-4 py-3 text-sm 
+                            font-medium hover:bg-primary-foreground/20 transition-colors 
+                            active:scale-[0.97]`}
+              >
                 <Download className="h-4 w-4" /> Download Full Analysis
               </button>
             </div>
@@ -214,5 +252,13 @@ export default function Calculator() {
         </div>
       </ScrollReveal>
     </div>
+  );
+}
+
+export default function Calculator() {
+  return (
+    <Suspense>
+      <CalculatorContent />
+    </Suspense>
   );
 }

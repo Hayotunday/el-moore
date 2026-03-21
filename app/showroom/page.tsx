@@ -39,7 +39,7 @@ export default function Showroom() {
   }, [selectedLocations, selectedTypes, priceRange]);
 
   return (
-    <div className="container py-12">
+    <div className="container p-12">
       <ScrollReveal>
         <h1 className="text-3xl md:text-4xl font-bold mb-2">
           Explore Investment Opportunities
@@ -123,7 +123,7 @@ export default function Showroom() {
         </ScrollReveal>
 
         {/* Grid */}
-        <div className="flex-1">
+        <div className="flex-1 pl-10 lg:pl-0">
           <div className="flex items-center justify-between mb-6">
             <p className="text-sm text-muted-foreground">
               <span className="font-semibold text-foreground">

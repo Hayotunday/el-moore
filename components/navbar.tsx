@@ -4,15 +4,16 @@ import Link from "next/link";
 import { Search, User, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 const navItems = [
   { label: "Lobby", path: "/" },
   { label: "Showroom", path: "/showroom" },
   { label: "Calculator", path: "/calculator" },
   { label: "Academy", path: "/academy" },
-  { label: "My Vault", path: "/vault" },
   { label: "Helpdesk", path: "/helpdesk" },
   { label: "Identity", path: "/identity" },
+  { label: "My Vault", path: "/vault" },
 ];
 
 export default function Navbar() {
@@ -20,13 +21,18 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
-      <div className="container flex h-16 items-center justify-between">
+    <header className="flex items-center justify-center sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
+      <div className="container lg:flex h-16 items-center justify-between hidden">
         <Link
           href="/"
           className="text-lg font-bold tracking-tight text-foreground"
         >
-          El-Moore Real Estate
+          <Image
+            src={"/assets/el-moore.png"}
+            alt="El-Moore Logo"
+            width={150}
+            height={150}
+          />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1">
@@ -63,14 +69,31 @@ export default function Navbar() {
         </button>
       </div>
 
-      {open && (
-        <div className="lg:hidden border-t border-border bg-background p-4 space-y-1">
-          {navItems.map((item) => (
+      <div className="lg:hidden w-full border-t border-border bg-background p-4 space-y-1">
+        <div className="flex justify-between items-center">
+          <Link
+            href="/"
+            className="text-lg font-bold tracking-tight text-foreground"
+          >
+            <img
+              src={"/assets/el-moore.png"}
+              alt="El-Moore Logo"
+              className="h-14 w-32"
+            />
+          </Link>
+
+          <button className="lg:hidden p-2" onClick={() => setOpen(!open)}>
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
+
+        {open &&
+          navItems.map((item) => (
             <Link
               key={item.path}
               href={item.path}
               onClick={() => setOpen(false)}
-              className={`block px-3 py-2 rounded-md text-sm font-medium ${
+              className={`w-full block px-3 py-2 rounded-md text-sm font-medium ${
                 pathname === item.path
                   ? "bg-muted text-foreground"
                   : "text-muted-foreground"
@@ -79,8 +102,7 @@ export default function Navbar() {
               {item.label}
             </Link>
           ))}
-        </div>
-      )}
+      </div>
     </header>
   );
 }

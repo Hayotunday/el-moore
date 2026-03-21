@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Heart,
   TrendingUp,
@@ -16,10 +18,10 @@ export default function MyVault() {
   const favProperties = properties.filter((p) => favorites.includes(p.id));
 
   return (
-    <div className="container py-12">
+    <div className="container p-12 min-w-full">
       {/* Profile Header */}
       <ScrollReveal>
-        <div className="flex flex-col lg:flex-row gap-8 mb-12">
+        <div className="flex flex-col lg:flex-row gap-8 mb-12 w-full">
           <div className="flex-1">
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1">
               Investor Profile
