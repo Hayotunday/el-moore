@@ -13,7 +13,7 @@ import { properties } from "@/lib/mockData";
 import { useFavorites } from "@/hooks/useFavorites";
 import Link from "next/link";
 
-export default function MyVault() {
+export default function Profile() {
   const { favorites } = useFavorites();
   const favProperties = properties.filter((p) => favorites.includes(p.id));
 
@@ -101,7 +101,7 @@ export default function MyVault() {
                   here.
                 </p>
                 <Link
-                  href="/showroom"
+                  href="/listings"
                   className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors active:scale-[0.97]"
                 >
                   Browse Showroom

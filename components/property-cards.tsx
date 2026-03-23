@@ -9,7 +9,7 @@ export default function PropertyCard({ property }: { property: Property }) {
   const fav = isFavorite(property.id);
 
   return (
-    <Link href={`/showroom/${property.id}`} className="group">
+    <Link href={`/listings/${property.id}`} className="group">
       <motion.div
         className="group relative rounded-lg overflow-hidden bg-card border border-border shadow-sm hover:shadow-md transition-shadow"
         whileHover={{ y: -2 }}
@@ -46,7 +46,7 @@ export default function PropertyCard({ property }: { property: Property }) {
           <div className="flex items-center justify-between pt-2">
             <span className="text-xs text-muted-foreground">Entry Value</span>
             <span className="font-semibold text-foreground">
-              ${property.price.toLocaleString()}
+              ₦{property.price.toLocaleString()}
             </span>
           </div>
         </div>

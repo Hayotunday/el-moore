@@ -198,17 +198,17 @@ function CalculatorContent() {
 
             <div className="flex gap-3">
               <button
-                className={`flex-1 flex items-center justify-center gap-2 bg-primary-foreground/10 
+                className="flex-1 flex items-center justify-center gap-2 bg-primary-foreground/10 
                             border border-primary-foreground/20 rounded-md py-3 text-sm font-medium 
-                            hover:bg-primary-foreground/20 transition-colors active:scale-[0.97]`}
+                            hover:bg-primary-foreground/20 transition-colors active:scale-[0.97]"
               >
                 <TrendingUp className="h-4 w-4" /> Find Properties with this ROI
               </button>
               <button
-                className={`flex items-center gap-2 bg-primary-foreground/10 border 
+                className="flex items-center gap-2 bg-primary-foreground/10 border 
                             border-primary-foreground/20 rounded-md px-4 py-3 text-sm 
                             font-medium hover:bg-primary-foreground/20 transition-colors 
-                            active:scale-[0.97]`}
+                            active:scale-[0.97]"
               >
                 <Download className="h-4 w-4" /> Download Full Analysis
               </button>

@@ -8,12 +8,12 @@ import Image from "next/image";
 
 const navItems = [
   { label: "Lobby", path: "/" },
-  { label: "Showroom", path: "/showroom" },
-  { label: "Calculator", path: "/calculator" },
-  { label: "Academy", path: "/academy" },
+  { label: "Listings", path: "/listings" },
+  { label: "ROI-Calculator", path: "/calculator" },
+  { label: "Blog", path: "/blog" },
   { label: "Helpdesk", path: "/helpdesk" },
-  { label: "Identity", path: "/identity" },
-  { label: "My Vault", path: "/vault" },
+  { label: "About Us", path: "/about-us" },
+  // { label: "My Vault", path: "/vault" },
 ];
 
 export default function Navbar() {
@@ -27,11 +27,10 @@ export default function Navbar() {
           href="/"
           className="text-lg font-bold tracking-tight text-foreground"
         >
-          <Image
+          <img
             src={"/assets/el-moore.png"}
             alt="El-Moore Logo"
-            width={150}
-            height={150}
+            className="h-14 w-32"
           />
         </Link>
 
@@ -56,7 +55,7 @@ export default function Navbar() {
             <Search className="h-4 w-4" />
           </button>
           <Link
-            href="/vault"
+            href="/profile"
             className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors active:scale-[0.97]"
           >
             <User className="h-4 w-4" />

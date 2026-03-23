@@ -35,7 +35,7 @@ export default function PropertyPage() {
       <div className="container min-h-[50vh] flex flex-col items-center justify-center p-20">
         <h1 className="text-2xl font-bold mb-4">Property Not Found</h1>
         <Link
-          href="/showroom"
+          href="/listings"
           className="text-primary underline underline-offset-4"
         >
           Return to Showroom
@@ -64,7 +64,7 @@ export default function PropertyPage() {
         {/* Navigation */}
         <div className="absolute top-8 left-0 w-full container z-10">
           <Link
-            href="/showroom"
+            href="/listings"
             className="inline-flex items-center gap-2 text-white/90 hover:text-white transition-colors bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium hover:bg-black/30"
           >
             <ArrowLeft className="h-4 w-4" /> Back to Showroom

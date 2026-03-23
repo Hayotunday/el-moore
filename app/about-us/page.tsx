@@ -3,7 +3,7 @@ import Link from "next/link";
 import ScrollReveal from "@/components/scroll-reveal";
 import { teamMembers } from "@/lib/mockData";
 
-export default function Identity() {
+export default function AboutUs() {
   return (
     <div className="flex flex-col items-center">
       {/* Hero */}

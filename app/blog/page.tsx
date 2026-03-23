@@ -5,7 +5,7 @@ import { ArrowRight, Clock, BookOpen, Scale, TrendingUp } from "lucide-react";
 import ScrollReveal from "@/components/scroll-reveal";
 import { articles } from "@/lib/mockData";
 
-export default function Academy() {
+export default function Blog() {
   const [email, setEmail] = useState("");
 
   return (
@@ -15,7 +15,10 @@ export default function Academy() {
         <ScrollReveal>
           <div className="grid md:grid-cols-2 gap-8 items-center bg-cream rounded-xl overflow-hidden">
             <div className="relative aspect-4/3">
-              <span className="absolute top-4 left-4 z-10 bg-gold text-secondary-foreground px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded">
+              <span
+                className="absolute top-4 left-4 z-10 bg-gold text-secondary-foreground px-3 py-1 
+              text-[10px] font-bold uppercase tracking-wider rounded"
+              >
                 Featured Insight
               </span>
               <img
@@ -37,7 +40,10 @@ export default function Academy() {
               </p>
               <div className="flex items-center gap-4 pt-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
+                  <div
+                    className="w-8 h-8 rounded-full bg-primary text-primary-foreground 
+                    flex items-center justify-center text-xs font-bold"
+                  >
                     EM
                   </div>
                   <div>
@@ -47,7 +53,11 @@ export default function Academy() {
                     </p>
                   </div>
                 </div>
-                <button className="ml-auto inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded text-xs font-bold uppercase tracking-wider hover:bg-primary/90 transition-colors active:scale-[0.97]">
+                <button
+                  className="ml-auto inline-flex items-center gap-2 bg-primary 
+                  text-primary-foreground px-4 py-2 rounded text-xs font-bold uppercase 
+                  tracking-wider hover:bg-primary/90 transition-colors active:scale-[0.97]"
+                >
                   Read Article <ArrowRight className="h-3 w-3" />
                 </button>
               </div>
@@ -66,7 +76,10 @@ export default function Academy() {
                 Navigating global trends and local opportunities.
               </p>
             </div>
-            <button className="text-sm font-medium text-foreground flex items-center gap-1 hover:text-muted-foreground transition-colors">
+            <button
+              className="text-sm font-medium text-foreground flex items-center 
+            gap-1 hover:text-muted-foreground transition-colors"
+            >
               View All Category <ArrowRight className="h-4 w-4" />
             </button>
           </div>

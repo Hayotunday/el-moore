@@ -6,15 +6,27 @@ import PropertyCard from "@/components/property-cards";
 import ScrollReveal from "@/components/scroll-reveal";
 import { ArrowRight } from "lucide-react";
 
-const locations = ["Abuja - Central", "Abuja - Maitama", "Lagos - Ikoyi"];
+const locations = [
+  "Abuja - Central",
+  "Abuja - Asokoro",
+  "Abuja - Guzape",
+  "Abuja - Gwarinpa",
+  "Abuja - Jabi",
+  "Abuja - Katampe",
+  "Abuja - Lokogoma",
+  "Abuja - Lugbe",
+  "Abuja - Maitama",
+  "Abuja - Wuse",
+  "Lagos - Ikoyi",
+];
 const propertyTypes = ["Land", "Terrace", "Duplex", "Flat"] as const;
 
-export default function Showroom() {
+export default function Listings() {
   const [selectedLocations, setSelectedLocations] = useState<string[]>([
     "Abuja - Central",
   ]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState(2500000);
+  const [priceRange, setPriceRange] = useState(500000000);
 
   const toggleLocation = (loc: string) => {
     setSelectedLocations((prev) =>
@@ -86,16 +98,16 @@ export default function Showroom() {
               </div>
               <input
                 type="range"
-                min={150000}
-                max={2500000}
-                step={50000}
+                min={1500000}
+                max={500000000}
+                step={1000000}
                 value={priceRange}
                 onChange={(e) => setPriceRange(Number(e.target.value))}
                 className="w-full accent-primary"
               />
               <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                <span>$150K</span>
-                <span>$2.5M+</span>
+                <span>₦1.5M</span>
+                <span>₦500M+</span>
               </div>
             </div>
 

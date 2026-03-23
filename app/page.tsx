@@ -87,7 +87,7 @@ export default function Lobby() {
               </div>
             </div>
             <Link
-              href="/showroom"
+              href="/listings"
               className="bg-primary text-primary-foreground px-6 py-4 text-xs font-bold uppercase tracking-wider hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 whitespace-nowrap active:scale-[0.97]"
             >
               Find Opportunities
@@ -109,7 +109,7 @@ export default function Lobby() {
               </h2>
             </div>
             <Link
-              href="/showroom"
+              href="/listings"
               className="text-sm font-medium text-foreground underline underline-offset-4 hover:text-muted-foreground transition-colors"
             >
               View All Portfolio
@@ -135,7 +135,7 @@ export default function Lobby() {
                   plans. Accessible globally, anytime.
                 </p>
                 <Link
-                  href="/vault"
+                  href="/profile"
                   className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-foreground hover:text-muted-foreground"
                 >
                   Access My Vault <ArrowRight className="h-3 w-3" />
@@ -232,7 +232,7 @@ export default function Lobby() {
                 </div>
               </div>
               <Link
-                href="/academy"
+                href="/blog"
                 className="inline-flex items-center gap-2 border border-foreground rounded-md px-6 py-3 text-xs font-bold uppercase tracking-wider hover:bg-primary hover:text-primary-foreground transition-colors active:scale-[0.97]"
               >
                 Enter the Academy
