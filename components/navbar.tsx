@@ -16,6 +16,16 @@ const navItems = [
   // { label: "My Vault", path: "/vault" },
 ];
 
+const mobileNavItems = [
+  { label: "Lobby", path: "/" },
+  { label: "Listings", path: "/listings" },
+  { label: "ROI-Calculator", path: "/calculator" },
+  { label: "Blog", path: "/blog" },
+  { label: "Helpdesk", path: "/helpdesk" },
+  { label: "About Us", path: "/about-us" },
+  { label: "Profile", path: "/profile" },
+];
+
 export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -87,7 +97,7 @@ export default function Navbar() {
         </div>
 
         {open &&
-          navItems.map((item) => (
+          mobileNavItems.map((item) => (
             <Link
               key={item.path}
               href={item.path}
