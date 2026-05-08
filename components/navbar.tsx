@@ -13,6 +13,7 @@ const navItems = [
   { label: "Blog", path: "/blog" },
   { label: "Helpdesk", path: "/helpdesk" },
   { label: "About Us", path: "/about-us" },
+  { label: "Marketer Portal", path: "/marketer" },
   // { label: "My Vault", path: "/vault" },
 ];
 
@@ -23,12 +24,18 @@ const mobileNavItems = [
   { label: "Blog", path: "/blog" },
   { label: "Helpdesk", path: "/helpdesk" },
   { label: "About Us", path: "/about-us" },
+  { label: "Marketer Portal", path: "/marketer" },
   { label: "Profile", path: "/profile" },
 ];
 
 export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+
+  // Do not render the main Navbar on management routes
+  const isManagementRoute =
+    pathname?.startsWith("/management") || pathname?.startsWith("/marketer");
+  if (isManagementRoute) return null;
 
   return (
     <header className="flex items-center justify-center sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
