@@ -21,16 +21,16 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="flex items-center justify-center sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
+    <header className="flex items-center justify-center sticky top-0 z-50 border-b border-primary/20 bg-primary text-primary-foreground backdrop-blur supports-backdrop-filter:bg-primary/95">
       <div className="container lg:flex h-16 items-center justify-between hidden">
         <Link
           href="/"
-          className="text-lg font-bold tracking-tight text-foreground"
+          className="text-lg font-bold tracking-tight text-primary-foreground"
         >
           <img
             src={"/assets/el-moore.png"}
             alt="El-Moore Logo"
-            className="h-14 w-32"
+            className="h-14 w-32 brightness-0 invert"
           />
         </Link>
 
@@ -41,8 +41,8 @@ export default function Navbar() {
               href={item.path}
               className={`px-3 py-2 text-sm font-medium transition-colors rounded-md ${
                 pathname === item.path
-                  ? "text-foreground underline underline-offset-4 decoration-2"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "text-primary-foreground underline underline-offset-4 decoration-2"
+                  : "text-primary-foreground/70 hover:text-primary-foreground"
               }`}
             >
               {item.label}
@@ -51,12 +51,12 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-2">
-          <button className="p-2 rounded-md hover:bg-muted transition-colors">
+          <button className="p-2 rounded-md hover:bg-primary-foreground/10 transition-colors">
             <Search className="h-4 w-4" />
           </button>
           <Link
             href="/profile"
-            className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors active:scale-[0.97]"
+            className="inline-flex items-center gap-2 rounded-md bg-gold px-4 py-2 text-sm font-medium text-secondary-foreground hover:bg-gold/90 transition-colors active:scale-[0.97]"
           >
             <User className="h-4 w-4" />
             Profile
@@ -68,16 +68,16 @@ export default function Navbar() {
         </button>
       </div>
 
-      <div className="lg:hidden w-full border-t border-border bg-background p-4 space-y-1">
+      <div className="lg:hidden w-full border-t border-primary/20 bg-primary p-4 space-y-1">
         <div className="flex justify-between items-center">
           <Link
             href="/"
-            className="text-lg font-bold tracking-tight text-foreground"
+            className="text-lg font-bold tracking-tight text-primary-foreground"
           >
             <img
               src={"/assets/el-moore.png"}
               alt="El-Moore Logo"
-              className="h-14 w-32"
+              className="h-14 w-32 brightness-0 invert"
             />
           </Link>
 
@@ -94,8 +94,8 @@ export default function Navbar() {
               onClick={() => setOpen(false)}
               className={`w-full block px-3 py-2 rounded-md text-sm font-medium ${
                 pathname === item.path
-                  ? "bg-muted text-foreground"
-                  : "text-muted-foreground"
+                  ? "bg-primary-foreground/10 text-primary-foreground"
+                  : "text-primary-foreground/70"
               }`}
             >
               {item.label}

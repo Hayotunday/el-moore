@@ -7,7 +7,7 @@ export default function AboutUs() {
   return (
     <div className="flex flex-col items-center">
       {/* Hero */}
-      <section className="container p-16">
+      <section className="container py-16">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <ScrollReveal>
             <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-2">
@@ -44,7 +44,7 @@ export default function AboutUs() {
       </section>
 
       {/* Heritage */}
-      <section className="container p-20">
+      <section className="container py-20">
         <ScrollReveal>
           <h2 className="text-2xl font-bold mb-1">Our Heritage</h2>
           <div className="w-16 h-0.5 bg-gold mb-12" />
@@ -91,7 +91,7 @@ export default function AboutUs() {
       </section>
 
       {/* Team */}
-      <section className="container p-20">
+      <section className="container py-20">
         <ScrollReveal>
           <h2 className="text-2xl font-bold mb-2">The Curators</h2>
           <p className="text-sm text-muted-foreground mb-10 max-w-lg">
@@ -124,7 +124,7 @@ export default function AboutUs() {
       </section>
 
       {/* Certifications */}
-      <section className="container p-12">
+      <section className="container py-12">
         <ScrollReveal>
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-t border-b border-border py-8">
             <div>
@@ -154,19 +154,19 @@ export default function AboutUs() {
       </section>
 
       {/* CTA */}
-      <section className="bg-cream">
-        <div className="container p-20 text-center">
+      <section className="bg-primary text-primary-foreground">
+        <div className="container py-20 text-center">
           <ScrollReveal>
             <h2 className="text-3xl font-bold mb-4">
               Experience Personal Concierge Investment
             </h2>
-            <p className="text-muted-foreground mb-8 max-w-md mx-auto">
+            <p className="text-primary-foreground/80 mb-8 max-w-md mx-auto">
               Every story at El-Moore begins with a conversation. Let us curate
               your next high-yield acquisition with the discretion you deserve.
             </p>
             <Link
               href="/helpdesk"
-              className="inline-flex items-center bg-primary text-primary-foreground px-8 py-4 rounded-md font-semibold hover:bg-primary/90 transition-colors active:scale-[0.97]"
+              className="inline-flex items-center bg-gold text-secondary-foreground px-8 py-4 rounded-md font-semibold hover:bg-gold/90 transition-colors active:scale-[0.97]"
             >
               Request Private Consultation
             </Link>

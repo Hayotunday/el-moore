@@ -51,7 +51,7 @@ export default function Listings() {
   }, [selectedLocations, selectedTypes, priceRange]);
 
   return (
-    <div className="container p-12">
+    <div className="container py-12">
       <ScrollReveal>
         <h1 className="text-3xl md:text-4xl font-bold mb-2">
           Explore Investment Opportunities

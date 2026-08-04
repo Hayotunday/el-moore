@@ -44,7 +44,7 @@ function CalculatorContent() {
   const formatNGN = (n: number) => "₦" + n.toLocaleString();
 
   return (
-    <div className="container p-12 min-w-full">
+    <div className="container py-12 min-w-full">
       <div className="grid lg:grid-cols-2 gap-12 items-start">
         {/* Left: Inputs */}
         <ScrollReveal>

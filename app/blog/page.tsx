@@ -11,7 +11,7 @@ export default function Blog() {
   return (
     <div>
       {/* Featured Insight */}
-      <section className="container p-12">
+      <section className="container py-12">
         <ScrollReveal>
           <div className="grid md:grid-cols-2 gap-8 items-center bg-cream rounded-xl overflow-hidden">
             <div className="relative aspect-4/3">
@@ -67,7 +67,7 @@ export default function Blog() {
       </section>
 
       {/* Market Insights */}
-      <section className="container p-12">
+      <section className="container py-12">
         <ScrollReveal>
           <div className="flex items-end justify-between mb-8">
             <div>
@@ -120,7 +120,7 @@ export default function Blog() {
 
       {/* Legal Masterclass */}
       <section className="bg-cream">
-        <div className="container p-16">
+        <div className="container py-16">
           <ScrollReveal>
             <h2 className="text-2xl font-bold italic mb-1">
               Legal Masterclass
@@ -192,7 +192,7 @@ export default function Blog() {
       </section>
 
       {/* Newsletter */}
-      <section className="container p-20">
+      <section className="container py-20">
         <ScrollReveal>
           <div className="bg-cream rounded-xl p-10 flex flex-col md:flex-row items-center justify-between gap-6">
             <div>

@@ -18,7 +18,7 @@ export default function Profile() {
   const favProperties = properties.filter((p) => favorites.includes(p.id));
 
   return (
-    <div className="container p-12 min-w-full">
+    <div className="container py-12 min-w-full">
       {/* Profile Header */}
       <ScrollReveal>
         <div className="flex flex-col lg:flex-row gap-8 mb-12 w-full">

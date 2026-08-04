@@ -32,7 +32,7 @@ export default function PropertyPage() {
 
   if (!property) {
     return (
-      <div className="container min-h-[50vh] flex flex-col items-center justify-center p-20">
+      <div className="container min-h-[50vh] flex flex-col items-center justify-center py-20">
         <h1 className="text-2xl font-bold mb-4">Property Not Found</h1>
         <Link
           href="/listings"
