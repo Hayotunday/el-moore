@@ -23,13 +23,13 @@ export default function PropertyCard({ property }: { property: Property }) {
           />
           <button
             onClick={() => toggle(property.id)}
-            className="absolute top-3 right-3 p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background transition-colors active:scale-95"
+            className="absolute top-3 right-3 p-2 rounded-full bg-card/90 backdrop-blur-sm hover:bg-card transition-colors active:scale-95"
           >
             <Heart
               className={`h-4 w-4 transition-colors ${fav ? "fill-red-500 text-red-500" : "text-foreground"}`}
             />
           </button>
-          <span className="absolute bottom-3 left-3 text-xs font-semibold px-2 py-1 rounded bg-secondary text-secondary-foreground">
+          <span className="absolute bottom-3 left-3 text-xs font-semibold px-2 py-1 rounded bg-gold text-secondary-foreground">
             +{property.roiPercent}% P.A. ROI
           </span>
         </div>

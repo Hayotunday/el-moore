@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search, User, Menu, X } from "lucide-react";
+import { Search, User, Menu, X, Building2 } from "lucide-react";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
@@ -42,13 +42,10 @@ export default function Navbar() {
       <div className="container lg:flex h-16 items-center justify-between hidden">
         <Link
           href="/"
-          className="text-lg font-bold tracking-tight text-primary-foreground"
+          className="text-2xl font-bold tracking-tight text-primary-foreground flex items-center gap-2"
         >
-          <img
-            src={"/assets/el-moore.png"}
-            alt="El-Moore Logo"
-            className="h-14 w-32 brightness-0 invert"
-          />
+          <Building2 className="h-8 w-8 text-gold" />
+          <span>El-Moore</span>
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1">
@@ -89,13 +86,10 @@ export default function Navbar() {
         <div className="flex justify-between items-center">
           <Link
             href="/"
-            className="text-lg font-bold tracking-tight text-primary-foreground"
+            className="text-2xl font-bold tracking-tight text-primary-foreground flex items-center gap-2"
           >
-            <img
-              src={"/assets/el-moore.png"}
-              alt="El-Moore Logo"
-              className="h-14 w-32 brightness-0 invert"
-            />
+            <Building2 className="h-8 w-8 text-gold" />
+            <span>El-Moore</span>
           </Link>
 
           <button className="lg:hidden p-2" onClick={() => setOpen(!open)}>
