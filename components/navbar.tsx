@@ -42,10 +42,13 @@ export default function Navbar() {
       <div className="container lg:flex h-16 items-center justify-between hidden">
         <Link
           href="/"
-          className="text-2xl font-bold tracking-tight text-primary-foreground flex items-center gap-2"
+          className="text-lg font-bold tracking-tight text-foreground shrink-0"
         >
-          <Building2 className="h-8 w-8 text-gold" />
-          <span>El-Moore</span>
+          <img
+            src={"/assets/el-moore-1.png"}
+            alt="El-Moore Logo"
+            className="h-12 w-auto"
+          />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-1">
