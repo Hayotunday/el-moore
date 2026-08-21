@@ -28,6 +28,12 @@ export default function Footer() {
               Investment Disclosure
             </Link>
             <Link
+              href="/marketer"
+              className="hover:opacity-100 transition-opacity"
+            >
+              Be A Marketer
+            </Link>
+            <Link
               href="/Helpdesk"
               className="hover:opacity-100 transition-opacity"
             >
