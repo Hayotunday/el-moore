@@ -13,7 +13,6 @@ const navItems = [
   { label: "Blog", path: "/blog" },
   { label: "Helpdesk", path: "/helpdesk" },
   { label: "About Us", path: "/about-us" },
-  { label: "Marketer Portal", path: "/marketer" },
   // { label: "My Vault", path: "/vault" },
 ];
 
@@ -24,7 +23,6 @@ const mobileNavItems = [
   { label: "Blog", path: "/blog" },
   { label: "Helpdesk", path: "/helpdesk" },
   { label: "About Us", path: "/about-us" },
-  { label: "Marketer Portal", path: "/marketer" },
   { label: "Profile", path: "/profile" },
 ];
 
@@ -56,10 +54,11 @@ export default function Navbar() {
             <Link
               key={item.path}
               href={item.path}
-              className={`px-3 py-2 text-sm font-medium transition-colors rounded-md ${pathname === item.path
-                ? "text-primary-foreground underline underline-offset-4 decoration-2"
-                : "text-primary-foreground/70 hover:text-primary-foreground"
-                }`}
+              className={`px-3 py-2 text-sm font-medium transition-colors rounded-md ${
+                pathname === item.path
+                  ? "text-primary-foreground underline underline-offset-4 decoration-2"
+                  : "text-primary-foreground/70 hover:text-primary-foreground"
+              }`}
             >
               {item.label}
             </Link>
@@ -108,10 +107,11 @@ export default function Navbar() {
               key={item.path}
               href={item.path}
               onClick={() => setOpen(false)}
-              className={`w-full block px-3 py-2 rounded-md text-sm font-medium ${pathname === item.path
-                ? "bg-primary-foreground/10 text-primary-foreground"
-                : "text-primary-foreground/70"
-                }`}
+              className={`w-full block px-3 py-2 rounded-md text-sm font-medium ${
+                pathname === item.path
+                  ? "bg-primary-foreground/10 text-primary-foreground"
+                  : "text-primary-foreground/70"
+              }`}
             >
               {item.label}
             </Link>
