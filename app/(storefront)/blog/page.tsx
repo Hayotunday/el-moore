@@ -2,18 +2,35 @@
 
 import { useEffect, useState } from "react";
 import { ArrowRight, Clock, BookOpen, Scale, TrendingUp } from "lucide-react";
+import { toast } from "sonner";
 import ScrollReveal from "@/components/scroll-reveal";
 import { articles } from "@/lib/mockData";
-import { listPosts } from "@/lib/api/blog";
+import { listPublishedPosts } from "@/lib/api/blog";
+import { subscribe } from "@/lib/api/newsletter";
 import type { BlogPost } from "@/lib/api/types";
 
 export default function Blog() {
   const [email, setEmail] = useState("");
+  const [subscribing, setSubscribing] = useState(false);
   const [managedPosts, setManagedPosts] = useState<BlogPost[]>([]);
 
   useEffect(() => {
-    listPosts({ publishedOnly: true }).then(setManagedPosts);
+    listPublishedPosts().then(setManagedPosts);
   }, []);
+
+  const handleSubscribe = async () => {
+    if (!email.trim()) return;
+    setSubscribing(true);
+    try {
+      await subscribe(email.trim());
+      toast.success("You're subscribed to The Curator's Digest.");
+      setEmail("");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not subscribe.");
+    } finally {
+      setSubscribing(false);
+    }
+  };
 
   return (
     <div>
@@ -87,17 +104,33 @@ export default function Blog() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {managedPosts.map((post, i) => (
               <ScrollReveal key={post.id} delay={i * 0.08}>
-                <div className="group cursor-pointer rounded-lg bg-card p-6 h-full">
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
-                    <span className="uppercase tracking-wider font-semibold text-gold">
-                      {post.category}
-                    </span>
+                <div className="group cursor-pointer rounded-lg bg-card overflow-hidden h-full">
+                  {post.coverImageUrl && (
+                    <div className="aspect-3/2 overflow-hidden">
+                      <img
+                        src={post.coverImageUrl}
+                        alt={post.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                  )}
+                  <div className="p-6">
+                    <h3 className="font-semibold text-foreground group-hover:text-muted-foreground transition-colors">
+                      {post.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mt-1 line-clamp-3">
+                      {post.content}
+                    </p>
+                    {post.publishedAt && (
+                      <p className="text-xs text-muted-foreground mt-4">
+                        {new Date(post.publishedAt).toLocaleDateString("en-NG", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </p>
+                    )}
                   </div>
-                  <h3 className="font-semibold text-foreground group-hover:text-muted-foreground transition-colors">
-                    {post.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mt-1">{post.excerpt}</p>
-                  <p className="text-xs text-muted-foreground mt-4">By {post.authorName}</p>
                 </div>
               </ScrollReveal>
             ))}
@@ -251,8 +284,12 @@ export default function Blog() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="border border-white/20 rounded-md px-4 py-2.5 text-sm bg-white/10 text-white placeholder:text-white/50 flex-1 md:w-64 focus:outline-none focus:ring-1 focus:ring-gold"
               />
-              <button className="bg-gold text-secondary-foreground px-5 py-2.5 rounded-md text-sm font-semibold hover:opacity-90 transition-opacity active:scale-[0.97] whitespace-nowrap">
-                Subscribe Now
+              <button
+                onClick={handleSubscribe}
+                disabled={subscribing}
+                className="bg-gold text-secondary-foreground px-5 py-2.5 rounded-md text-sm font-semibold hover:opacity-90 transition-opacity active:scale-[0.97] whitespace-nowrap disabled:opacity-60"
+              >
+                {subscribing ? "Subscribing…" : "Subscribe Now"}
               </button>
             </div>
           </div>
