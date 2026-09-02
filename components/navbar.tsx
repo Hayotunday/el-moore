@@ -30,9 +30,11 @@ export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
-  // Do not render the main Navbar on management routes
+  // Do not render the main Navbar on management/marketer routes or the standalone invite claim page
   const isManagementRoute =
-    pathname?.startsWith("/management") || pathname?.startsWith("/marketer");
+    pathname?.startsWith("/management") ||
+    pathname?.startsWith("/marketer") ||
+    pathname?.startsWith("/invite");
   if (isManagementRoute) return null;
 
   return (

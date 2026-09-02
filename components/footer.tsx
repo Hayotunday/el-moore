@@ -6,8 +6,14 @@ import { usePathname } from "next/navigation";
 export default function Footer() {
   const pathname = usePathname();
 
-  // Do not render the main Footer on management routes
-  if (pathname?.startsWith("/management")) return null;
+  // Do not render the main Footer on management/marketer routes or the standalone invite claim page
+  if (
+    pathname?.startsWith("/management") ||
+    pathname?.startsWith("/marketer") ||
+    pathname?.startsWith("/invite")
+  ) {
+    return null;
+  }
 
   return (
     <footer className="bg-primary text-primary-foreground border-t border-white/10 w-full flex items-center justify-center z-50">
