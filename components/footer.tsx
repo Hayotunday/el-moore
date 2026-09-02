@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 export default function Footer() {
   const pathname = usePathname();
 
-  // Do not render the main Footer on management/marketer routes or the standalone invite claim page
   if (
     pathname?.startsWith("/management") ||
     pathname?.startsWith("/marketer") ||
@@ -16,39 +15,33 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-primary text-primary-foreground border-t border-white/10 w-full flex items-center justify-center z-50">
+    <footer className="bg-primary text-primary-foreground w-full flex items-center justify-center z-50">
       <div className="w-full flex flex-col justify-between items-center">
-        <div className="container px-7 pt-12 pb-7 w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="container px-7 pt-14 pb-8 w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
             <h3 className="text-lg font-bold">El-Moore Real Estate</h3>
-            <p className="text-base font-semibold mt-1">RC: 1938760</p>
+            <p className="text-sm font-medium mt-1 text-primary-foreground/60">RC: 1938760</p>
           </div>
-          <nav className="flex flex-wrap gap-6 text-sm opacity-80">
-            <Link href="#" className="hover:opacity-100 transition-opacity">
+          <nav className="flex flex-wrap gap-6 text-sm text-primary-foreground/70">
+            <Link href="#" className="hover:text-primary-foreground transition-colors">
               Privacy Policy
             </Link>
-            <Link href="#" className="hover:opacity-100 transition-opacity">
+            <Link href="#" className="hover:text-primary-foreground transition-colors">
               Terms of Service
             </Link>
-            <Link href="#" className="hover:opacity-100 transition-opacity">
+            <Link href="#" className="hover:text-primary-foreground transition-colors">
               Investment Disclosure
             </Link>
-            <Link
-              href="/marketer"
-              className="hover:opacity-100 transition-opacity"
-            >
+            <Link href="/marketer" className="hover:text-primary-foreground transition-colors">
               Be A Marketer
             </Link>
-            <Link
-              href="/Helpdesk"
-              className="hover:opacity-100 transition-opacity"
-            >
+            <Link href="/helpdesk" className="hover:text-primary-foreground transition-colors">
               Contact Us
             </Link>
           </nav>
         </div>
-        <p className="text-sm text-center opacity-70 mb-5 w-full">
-          © 2024 El-Moore Real Estate. All rights reserved.
+        <p className="text-xs text-center text-primary-foreground/50 mb-6 w-full">
+          © {new Date().getFullYear()} El-Moore Real Estate. All rights reserved.
         </p>
       </div>
     </footer>

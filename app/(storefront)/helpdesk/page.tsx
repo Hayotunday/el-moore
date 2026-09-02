@@ -31,7 +31,7 @@ export default function Helpdesk() {
         {/* Left: Contact Form */}
         <div className="space-y-8">
           <ScrollReveal>
-            <div className="rounded-lg border border-border p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="rounded-md bg-card p-6 shadow-ambient flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <h3 className="font-bold text-lg">Immediate Assistance</h3>
                 <p className="text-sm text-muted-foreground">
@@ -51,7 +51,7 @@ export default function Helpdesk() {
           </ScrollReveal>
 
           <ScrollReveal delay={0.1}>
-            <div className="rounded-lg border border-border p-6 space-y-5">
+            <div className="rounded-md bg-card p-6 shadow-ambient space-y-5">
               <h3 className="font-bold text-lg">Send an Email Inquiry</h3>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
@@ -116,7 +116,7 @@ export default function Helpdesk() {
         {/* Right: Map + Contact Info */}
         <div className="space-y-8">
           <ScrollReveal direction="right">
-            <div className="rounded-xl overflow-hidden bg-muted aspect-4/3 relative">
+            <div className="rounded-md overflow-hidden bg-muted aspect-4/3 relative shadow-ambient">
               <iframe
                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.0!2d7.49!3d9.05!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOcKwMDMnMDAuMCJOIDfCsDI5JzI0LjAiRQ!5e0!3m2!1sen!2sng!4v1234567890"
                 width="100%"
@@ -126,7 +126,7 @@ export default function Helpdesk() {
                 loading="lazy"
                 className="absolute inset-0"
               />
-              <div className="absolute bottom-4 left-4 right-4 bg-card/95 backdrop-blur-sm rounded-lg p-4 flex items-center gap-3">
+              <div className="absolute bottom-4 left-4 right-4 glass rounded-md p-4 flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gold flex items-center justify-center shrink-0">
                   <MapPin className="h-5 w-5 text-secondary-foreground" />
                 </div>

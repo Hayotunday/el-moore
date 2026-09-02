@@ -10,7 +10,8 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
-import { TrendingUp, Download, Shield, Home } from "lucide-react";
+import { TrendingUp, Search, Shield, Home } from "lucide-react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import ScrollReveal from "@/components/scroll-reveal";
 
@@ -62,7 +63,7 @@ function CalculatorContent() {
             on regional historical data.
           </p>
 
-          <div className="rounded-lg border border-border p-6 space-y-8">
+          <div className="rounded-md bg-card p-6 space-y-8 shadow-ambient">
             <div>
               <label className="text-sm font-medium mb-2 block">
                 Purchase Price (NGN)
@@ -110,17 +111,17 @@ function CalculatorContent() {
             </div>
           </div>
 
-          <div className="border-l-4 border-gold p-6 flex-1 mt-5 bg-card text-card-foreground">
+          <div className="border-l-4 border-gold p-6 flex-1 mt-5 bg-card text-card-foreground rounded-r-md shadow-ambient">
             <p className="italic">
-              "Real estate is the only asset class where time literally
-              manufacture wealth"
+              &quot;Real estate is the only asset class where time literally
+              manufactures wealth.&quot;
             </p>
           </div>
         </ScrollReveal>
 
         {/* Right: Results */}
         <ScrollReveal direction="right">
-          <div className="bg-primary rounded-xl p-8 text-primary-foreground">
+          <div className="bg-primary rounded-md p-8 text-primary-foreground shadow-ambient-lg">
             <div className="flex items-start justify-between mb-8">
               <div>
                 <p className="text-[10px] uppercase tracking-widest text-gold font-semibold mb-1">
@@ -197,21 +198,14 @@ function CalculatorContent() {
             </div>
 
             <div className="flex gap-3">
-              <button
-                className="flex-1 flex items-center justify-center gap-2 bg-primary-foreground/10 
-                            border border-primary-foreground/20 rounded-md py-3 text-sm font-medium 
-                            hover:bg-primary-foreground/20 transition-colors active:scale-[0.97]"
+              <Link
+                href="/listings"
+                className="flex-1 flex items-center justify-center gap-2 bg-gold text-secondary-foreground
+                            rounded-md py-3 text-sm font-semibold
+                            hover:bg-gold/90 transition-colors active:scale-[0.97]"
               >
-                <TrendingUp className="h-4 w-4" /> Find Properties with this ROI
-              </button>
-              <button
-                className="flex items-center gap-2 bg-primary-foreground/10 border 
-                            border-primary-foreground/20 rounded-md px-4 py-3 text-sm 
-                            font-medium hover:bg-primary-foreground/20 transition-colors 
-                            active:scale-[0.97]"
-              >
-                <Download className="h-4 w-4" /> Download Full Analysis
-              </button>
+                <Search className="h-4 w-4" /> Browse Available Properties
+              </Link>
             </div>
           </div>
         </ScrollReveal>
@@ -242,7 +236,7 @@ function CalculatorContent() {
           ].map((item, i) => (
             <div
               key={i}
-              className="rounded-lg border border-border p-6 space-y-2"
+              className="rounded-md bg-card p-6 space-y-2 shadow-ambient"
             >
               <p className="text-xs text-gold font-semibold">{item.label}</p>
               <p className="text-xl font-bold">{item.value}</p>

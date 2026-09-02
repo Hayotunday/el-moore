@@ -1,10 +1,5 @@
 import { useSyncExternalStore, useCallback } from "react";
-import {
-  getFavorites,
-  toggleFavorite,
-  isFavorite,
-  subscribe,
-} from "@/lib/favorites";
+import { getFavorites, toggleFavorite, subscribe } from "@/lib/favorites";
 
 const SERVER_SNAPSHOT: string[] = [];
 const getServerSnapshot = () => SERVER_SNAPSHOT;
