@@ -1,10 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Heart, Menu, X } from "lucide-react";
+import { Heart, LogOut, Menu, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { toast } from "sonner";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useAuth } from "@/contexts/auth-context";
+import { useAuthDrawer } from "@/contexts/auth-drawer-context";
+import { getShortName } from "@/lib/utils";
 
 const navItems = [
   { label: "Lobby", path: "/" },
@@ -22,6 +26,13 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { favorites } = useFavorites();
+  const { user, logout } = useAuth();
+  const { open: openAuthDrawer } = useAuthDrawer();
+
+  const handleLogout = async () => {
+    await logout();
+    toast.success("Signed out.");
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -79,6 +90,27 @@ export default function Navbar() {
               </span>
             )}
           </Link>
+          {user ? (
+            <div className="flex items-center gap-2 pl-1">
+              <span className="text-sm font-medium text-primary-foreground/90">
+                {getShortName(user) || "there"}
+              </span>
+              <button
+                onClick={handleLogout}
+                title="Sign out"
+                className="flex h-8 w-8 items-center justify-center rounded-full text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10 transition-colors"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => openAuthDrawer("signin")}
+              className="inline-flex items-center gap-2 rounded-md border border-primary-foreground/25 px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-foreground/10 transition-colors active:scale-[0.97]"
+            >
+              <User className="h-4 w-4" /> Sign In
+            </button>
+          )}
         </div>
 
         <button className="lg:hidden p-2" onClick={() => setOpen(!open)}>
@@ -97,21 +129,47 @@ export default function Navbar() {
           </button>
         </div>
 
-        {open &&
-          mobileNavItems.map((item) => (
-            <Link
-              key={item.path}
-              href={item.path}
-              onClick={() => setOpen(false)}
-              className={`w-full block px-3 py-2 rounded-sm text-sm font-medium ${
-                pathname === item.path
-                  ? "bg-primary-foreground/10 text-primary-foreground"
-                  : "text-primary-foreground/70"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
+        {open && (
+          <>
+            {mobileNavItems.map((item) => (
+              <Link
+                key={item.path}
+                href={item.path}
+                onClick={() => setOpen(false)}
+                className={`w-full block px-3 py-2 rounded-sm text-sm font-medium ${
+                  pathname === item.path
+                    ? "bg-primary-foreground/10 text-primary-foreground"
+                    : "text-primary-foreground/70"
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <div className="pt-2 mt-2 border-t border-primary-foreground/10">
+              {user ? (
+                <button
+                  onClick={() => {
+                    setOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium text-primary-foreground/70"
+                >
+                  <LogOut className="h-4 w-4" /> Sign out ({getShortName(user) || "there"})
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setOpen(false);
+                    openAuthDrawer("signin");
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium text-primary-foreground/70"
+                >
+                  <User className="h-4 w-4" /> Sign In
+                </button>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </header>
   );

@@ -15,13 +15,15 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import ScrollReveal from "@/components/scroll-reveal";
+import { useAuth } from "@/contexts/auth-context";
 import { listPublicProperties, listPropertyImages } from "@/lib/api/properties";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, getFullName } from "@/lib/utils";
 import type { Property, PropertyImage } from "@/lib/api/types";
 
 export default function PropertyPage() {
   const params = useParams();
   const id = params?.id as string;
+  const { user } = useAuth();
 
   const [property, setProperty] = useState<Property | null>(null);
   const [images, setImages] = useState<PropertyImage[]>([]);
@@ -31,6 +33,11 @@ export default function PropertyPage() {
 
   const [formData, setFormData] = useState({ name: "", email: "", date: "", time: "" });
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    setFormData((f) => ({ ...f, name: f.name || getFullName(user), email: f.email || user.email }));
+  }, [user]);
 
   useEffect(() => {
     if (!id) return;
