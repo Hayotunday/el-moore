@@ -9,8 +9,6 @@ import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/contexts/auth-context";
 import { AuthDrawerProvider } from "@/contexts/auth-drawer-context";
 import AuthDrawer from "@/components/auth-drawer";
-import { ConfirmDialogProvider } from "@/contexts/confirm-dialog-context";
-import ConfirmDialog from "@/components/confirm-dialog";
 import ReferralTracker from "@/components/referral-tracker";
 import SplashScreen from "@/components/splash-screen";
 import ChatbotFab from "@/components/chatbot-fab";
@@ -67,19 +65,16 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col" suppressHydrationWarning>
         <AuthProvider realm="storefront">
           <AuthDrawerProvider>
-            <ConfirmDialogProvider>
-              <ReferralTracker />
-              <SplashScreen />
-              <Navbar />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer />
-              <ChatbotFab />
-              <AuthDrawer />
-              <ConfirmDialog />
-              <Toaster />
-            </ConfirmDialogProvider>
+            <ReferralTracker />
+            <SplashScreen />
+            <Navbar />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+            <ChatbotFab />
+            <AuthDrawer />
+            <Toaster />
           </AuthDrawerProvider>
         </AuthProvider>
       </body>

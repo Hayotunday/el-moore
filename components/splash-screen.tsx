@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 
 export default function SplashScreen() {
-  const pathname = usePathname();
   const [hide, setHide] = useState(false);
   const [mounted, setMounted] = useState(true);
 
@@ -18,12 +16,7 @@ export default function SplashScreen() {
     };
   }, []);
 
-  const isManagementRoute =
-    pathname?.startsWith("/management") ||
-    pathname?.startsWith("/marketer") ||
-    pathname?.startsWith("/invite");
-
-  if (isManagementRoute || !mounted) return null;
+  if (!mounted) return null;
 
   return (
     <div

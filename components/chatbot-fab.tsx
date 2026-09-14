@@ -1,17 +1,8 @@
 "use client";
 
 import { MessageCircle } from "lucide-react";
-import { usePathname } from "next/navigation";
 
 export default function ChatbotFab() {
-  const pathname = usePathname();
-
-  const isManagementRoute =
-    pathname?.startsWith("/management") ||
-    pathname?.startsWith("/marketer") ||
-    pathname?.startsWith("/invite");
-  if (isManagementRoute) return null;
-
   return (
     <a
       href="https://wa.me/2348000000000"

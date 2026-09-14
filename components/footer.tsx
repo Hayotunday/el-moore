@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+
+// The management/marketer portal is a separate deployment (a separate repo)
+// as of the storefront/dashboard split — point this at its real deployed URL.
+const MARKETER_PORTAL_URL = process.env.NEXT_PUBLIC_MARKETER_PORTAL_URL || "#";
 
 const columns = [
   {
@@ -17,7 +20,7 @@ const columns = [
     links: [
       { label: "About Us", href: "/about-us" },
       { label: "The Academy", href: "/blog" },
-      { label: "Be A Marketer", href: "/marketer" },
+      { label: "Be A Marketer", href: MARKETER_PORTAL_URL },
     ],
   },
   {
@@ -31,16 +34,6 @@ const columns = [
 ];
 
 export default function Footer() {
-  const pathname = usePathname();
-
-  if (
-    pathname?.startsWith("/management") ||
-    pathname?.startsWith("/marketer") ||
-    pathname?.startsWith("/invite")
-  ) {
-    return null;
-  }
-
   return (
     <footer className="w-full bg-primary text-primary-foreground">
       <div className="container pt-20 pb-10">
