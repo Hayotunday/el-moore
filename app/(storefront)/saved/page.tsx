@@ -34,10 +34,8 @@ export default function SavedProperties() {
   return (
     <div className="container py-12">
       <ScrollReveal>
-        <p className="text-[10px] uppercase tracking-widest text-gold font-semibold mb-2">
-          Your Watchlist
-        </p>
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">Saved Properties</h1>
+        <p className="eyebrow mb-3">Your Watchlist</p>
+        <h1 className="font-serif text-3xl md:text-4xl font-medium mb-2">Saved Properties</h1>
         <p className="text-muted-foreground max-w-xl mb-10">
           Properties you&apos;ve saved while browsing the showroom, kept here
           on this device for quick access.

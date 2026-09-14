@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Heart, LogOut, Menu, User, X } from "lucide-react";
+import { Heart, LogOut, Menu, Search, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
@@ -9,6 +9,7 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { useAuth } from "@/contexts/auth-context";
 import { useAuthDrawer } from "@/contexts/auth-drawer-context";
 import { getShortName } from "@/lib/utils";
+import SearchDialog from "@/components/search-dialog";
 
 const navItems = [
   { label: "Lobby", path: "/" },
@@ -24,6 +25,7 @@ const mobileNavItems = [...navItems, { label: "Saved Properties", path: "/saved"
 export default function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { favorites } = useFavorites();
   const { user, logout } = useAuth();
@@ -48,6 +50,7 @@ export default function Navbar() {
   if (isManagementRoute) return null;
 
   return (
+    <>
     <header
       className={`flex items-center justify-center sticky top-0 z-50 bg-primary text-primary-foreground backdrop-blur transition-shadow ${
         scrolled ? "shadow-ambient-lg" : ""
@@ -78,14 +81,23 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
+            aria-haspopup="dialog"
+            aria-label="Search properties"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-primary-foreground/85 transition-colors hover:bg-primary-foreground/10 hover:text-primary-foreground"
+          >
+            <Search className="h-4.5 w-4.5" strokeWidth={2.5} />
+          </button>
           <Link
             href="/saved"
-            className="relative inline-flex items-center gap-2 rounded-md bg-gold px-4 py-2 text-sm font-medium text-secondary-foreground hover:bg-gold/90 transition-colors active:scale-[0.97]"
+            aria-label={`Saved properties${favorites.length ? ` (${favorites.length})` : ""}`}
+            className="relative flex h-9 w-9 items-center justify-center rounded-full text-primary-foreground/85 transition-colors hover:bg-primary-foreground/10 hover:text-primary-foreground"
           >
-            <Heart className="h-4 w-4" />
-            Saved
+            <Heart className="h-4.5 w-4.5" strokeWidth={2.5} />
             {favorites.length > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-primary-foreground">
+              <span className="absolute top-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-gold text-[9px] font-bold text-secondary-foreground">
                 {favorites.length}
               </span>
             )}
@@ -124,9 +136,20 @@ export default function Navbar() {
             <img src="/assets/el-moore-1.png" alt="El-Moore Logo" className="h-11 w-auto" />
           </Link>
 
-          <button className="lg:hidden p-2" onClick={() => setOpen(!open)}>
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setSearchOpen(true)}
+              aria-haspopup="dialog"
+              aria-label="Search properties"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-primary-foreground/80 hover:bg-primary-foreground/10"
+            >
+              <Search className="h-4.5 w-4.5" />
+            </button>
+            <button className="p-2" onClick={() => setOpen(!open)}>
+              {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
 
         {open && (
@@ -172,5 +195,7 @@ export default function Navbar() {
         )}
       </div>
     </header>
+    <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
+    </>
   );
 }

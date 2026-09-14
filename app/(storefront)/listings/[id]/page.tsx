@@ -131,7 +131,7 @@ export default function PropertyPage() {
                 <span>•</span>
                 <span>{property.location}</span>
               </div>
-              <h1 className="text-4xl md:text-6xl font-bold mb-4 text-white leading-tight">
+              <h1 className="font-serif text-4xl md:text-6xl font-medium mb-4 text-white leading-tight">
                 {property.title}
               </h1>
               <div className="flex flex-wrap items-center gap-6 text-sm font-medium">
@@ -153,7 +153,7 @@ export default function PropertyPage() {
         <div className="lg:col-span-2 space-y-12">
           {images.length > 1 && (
             <ScrollReveal>
-              <h2 className="text-lg font-bold mb-4">Gallery</h2>
+              <h2 className="font-serif text-lg font-medium mb-4">Gallery</h2>
               <div className="grid grid-cols-4 gap-3">
                 {images.map((img, i) => (
                   <button
@@ -171,7 +171,7 @@ export default function PropertyPage() {
           )}
 
           <ScrollReveal>
-            <h2 className="text-2xl font-bold mb-4 text-foreground">Property Overview</h2>
+            <h2 className="font-serif text-2xl font-medium mb-4 text-foreground">Property Overview</h2>
             <p className="text-muted-foreground leading-relaxed text-base">
               {property.title} is located in {property.location}, listed at{" "}
               {formatCurrency(property.price)}. All titles offered by El-Moore
@@ -184,8 +184,8 @@ export default function PropertyPage() {
           <ScrollReveal delay={0.2}>
             <div className="bg-card rounded-md p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-ambient">
               <div>
-                <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-gold" /> Wealth Projection
+                <h3 className="font-serif text-xl font-medium mb-2 flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-gold-deep" /> Wealth Projection
                 </h3>
                 <p className="text-muted-foreground text-sm max-w-md">
                   Calculate the compounded value of this asset over 5-10 years
@@ -211,7 +211,7 @@ export default function PropertyPage() {
                   Listing Value
                 </p>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-3xl font-bold text-foreground">
+                  <span className="font-serif text-3xl font-semibold text-gold-deep">
                     {formatCurrency(property.price)}
                   </span>
                 </div>

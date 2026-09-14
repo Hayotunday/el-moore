@@ -3,6 +3,33 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+const columns = [
+  {
+    heading: "Estates",
+    links: [
+      { label: "Showroom", href: "/listings" },
+      { label: "Saved Properties", href: "/saved" },
+      { label: "ROI Calculator", href: "/calculator" },
+    ],
+  },
+  {
+    heading: "Company",
+    links: [
+      { label: "About Us", href: "/about-us" },
+      { label: "The Academy", href: "/blog" },
+      { label: "Be A Marketer", href: "/marketer" },
+    ],
+  },
+  {
+    heading: "Support",
+    links: [
+      { label: "Helpdesk", href: "/helpdesk" },
+      { label: "Privacy Policy", href: "#" },
+      { label: "Terms of Service", href: "#" },
+    ],
+  },
+];
+
 export default function Footer() {
   const pathname = usePathname();
 
@@ -15,32 +42,36 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-primary text-primary-foreground w-full flex items-center justify-center z-50">
-      <div className="w-full flex flex-col justify-between items-center">
-        <div className="container px-7 pt-14 pb-8 w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+    <footer className="w-full bg-primary text-primary-foreground">
+      <div className="container pt-20 pb-10">
+        <div className="grid grid-cols-2 gap-10 border-b border-white/12 pb-12 md:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div>
-            <h3 className="text-lg font-bold">El-Moore Real Estate</h3>
-            <p className="text-sm font-medium mt-1 text-primary-foreground/60">RC: 1938760</p>
+            <img src="/assets/el-moore-1.png" alt="El-Moore Logo" className="h-8 w-auto mb-4" />
+            <p className="max-w-[26ch] text-sm leading-relaxed text-primary-foreground/60">
+              RC: 1938760. A registered brokerage for verified land and property
+              investment across Nigeria.
+            </p>
           </div>
-          <nav className="flex flex-wrap gap-6 text-sm text-primary-foreground/70">
-            <Link href="#" className="hover:text-primary-foreground transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="#" className="hover:text-primary-foreground transition-colors">
-              Terms of Service
-            </Link>
-            <Link href="#" className="hover:text-primary-foreground transition-colors">
-              Investment Disclosure
-            </Link>
-            <Link href="/marketer" className="hover:text-primary-foreground transition-colors">
-              Be A Marketer
-            </Link>
-            <Link href="/helpdesk" className="hover:text-primary-foreground transition-colors">
-              Contact Us
-            </Link>
-          </nav>
+          {columns.map((col) => (
+            <div key={col.heading}>
+              <h4 className="mb-4 text-[0.7rem] font-semibold tracking-widest text-primary-foreground/55 uppercase">
+                {col.heading}
+              </h4>
+              <div className="flex flex-col gap-2.5">
+                {col.links.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className="text-sm text-primary-foreground/85 transition-colors hover:text-gold"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
-        <p className="text-xs text-center text-primary-foreground/50 mb-6 w-full">
+        <p className="pt-8 text-center text-[0.78rem] text-primary-foreground/50">
           © {new Date().getFullYear()} El-Moore Real Estate. All rights reserved.
         </p>
       </div>

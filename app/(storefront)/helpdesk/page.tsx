@@ -18,12 +18,10 @@ export default function Helpdesk() {
   return (
     <div className="container py-12">
       <ScrollReveal>
-        <p className="text-[10px] uppercase tracking-widest text-gold font-semibold mb-2">
-          Concierge & Support
-        </p>
-        <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-12 max-w-2xl">
+        <p className="eyebrow mb-4">Concierge & Support</p>
+        <h1 className="font-serif text-3xl md:text-5xl font-medium leading-tight mb-12 max-w-2xl">
           Personalized support for your{" "}
-          <span className="text-gold italic">investment journey.</span>
+          <em className="text-gold-deep italic">investment journey.</em>
         </h1>
       </ScrollReveal>
 

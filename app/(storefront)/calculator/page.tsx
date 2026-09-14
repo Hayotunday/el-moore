@@ -49,10 +49,8 @@ function CalculatorContent() {
       <div className="grid lg:grid-cols-2 gap-12 items-start">
         {/* Left: Inputs */}
         <ScrollReveal>
-          <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-2">
-            Premium Analysis
-          </p>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4 leading-tight">
+          <p className="eyebrow mb-4">Premium Analysis</p>
+          <h1 className="font-serif text-3xl md:text-4xl font-medium mb-4 leading-tight">
             Investment
             <br />
             Growth Predictor
@@ -131,7 +129,7 @@ function CalculatorContent() {
                   key={result.roiPercent}
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-5xl font-bold tabular-nums"
+                  className="font-serif text-5xl font-semibold tabular-nums"
                 >
                   {result.roiPercent.toFixed(1)}%
                 </motion.p>

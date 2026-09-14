@@ -34,11 +34,9 @@ export default function AboutUs() {
       <section className="container py-16">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <ScrollReveal>
-            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-2">
-              Our Philosophy
-            </p>
-            <h1 className="text-4xl md:text-5xl font-bold leading-[1.05] mb-6">
-              Building Wealth Through <em className="italic">Curated</em> Real
+            <p className="eyebrow mb-4">Our Philosophy</p>
+            <h1 className="font-serif text-4xl md:text-5xl font-medium leading-[1.1] mb-6">
+              Building Wealth Through <em className="text-gold-deep italic">Curated</em> Real
               Estate
             </h1>
             <p className="text-muted-foreground mb-8 max-w-md">
@@ -77,8 +75,8 @@ export default function AboutUs() {
       {/* Brand Story — sourced from the El-Moore BrandMark narrative */}
       <section className="container py-20">
         <ScrollReveal>
-          <h2 className="text-2xl font-bold mb-1">The Mark We Build On</h2>
-          <div className="w-16 h-0.5 bg-gold mb-6" />
+          <p className="eyebrow mb-4">Our Identity</p>
+          <h2 className="font-serif text-2xl font-medium mb-6">The Mark We Build On</h2>
           <p className="text-muted-foreground max-w-2xl mb-12">
             Our brandmark is deliberate: dual curves sweeping around rising
             vertical forms. The curves reflect inclusivity and the seamless
@@ -92,8 +90,8 @@ export default function AboutUs() {
           {pillars.map((pillar, i) => (
             <ScrollReveal key={pillar.title} delay={i * 0.08}>
               <div className="rounded-md bg-card p-6 h-full shadow-ambient space-y-3">
-                <pillar.icon className="h-6 w-6 text-gold" />
-                <h3 className="font-bold text-base">{pillar.title}</h3>
+                <pillar.icon className="h-6 w-6 text-gold-deep" />
+                <h3 className="font-serif text-base font-medium">{pillar.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {pillar.body}
                 </p>
@@ -106,7 +104,8 @@ export default function AboutUs() {
       {/* Leadership */}
       <section className="container py-20">
         <ScrollReveal>
-          <h2 className="text-2xl font-bold mb-2">Leadership</h2>
+          <p className="eyebrow mb-4">Our Team</p>
+          <h2 className="font-serif text-2xl font-medium mb-2">Leadership</h2>
           <p className="text-sm text-muted-foreground mb-10 max-w-lg">
             The team responsible for every acquisition, sale, and client
             relationship at El-Moore Real Estate.
@@ -121,7 +120,7 @@ export default function AboutUs() {
                     <ShieldCheck className="h-7 w-7" />
                   </div>
                 </div>
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">
+                <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">
                   {member.role}
                 </p>
               </div>
@@ -135,7 +134,7 @@ export default function AboutUs() {
         <ScrollReveal>
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 rounded-md bg-card p-8 shadow-ambient">
             <div>
-              <h3 className="font-bold text-lg mb-1">Verified, Every Time</h3>
+              <h3 className="font-serif text-lg font-medium mb-1">Verified, Every Time</h3>
               <p className="text-sm text-muted-foreground max-w-md">
                 Every property in our catalog is titled and verified before it
                 reaches a client — no exceptions.
@@ -153,7 +152,7 @@ export default function AboutUs() {
       <section className="bg-gradient-green w-full">
         <div className="container py-20 text-center">
           <ScrollReveal>
-            <h2 className="text-3xl font-bold mb-4 text-white">
+            <h2 className="font-serif text-3xl font-medium mb-4 text-white">
               Experience Personal Concierge Investment
             </h2>
             <p className="text-white/75 mb-8 max-w-md mx-auto">

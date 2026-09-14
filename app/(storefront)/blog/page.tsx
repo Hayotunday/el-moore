@@ -41,10 +41,8 @@ export default function Blog() {
     <div>
       <section className="container pt-12 pb-6">
         <ScrollReveal>
-          <p className="text-[10px] uppercase tracking-widest text-gold font-semibold mb-2">
-            The El-Moore Academy
-          </p>
-          <h1 className="text-3xl md:text-4xl font-bold max-w-xl">
+          <p className="eyebrow mb-3">The El-Moore Academy</p>
+          <h1 className="font-serif text-3xl md:text-4xl font-medium max-w-xl">
             Insights for the discerning investor.
           </h1>
         </ScrollReveal>
@@ -75,7 +73,9 @@ export default function Blog() {
                 )}
               </div>
               <div className="p-8 space-y-4">
-                <h2 className="text-3xl font-bold leading-tight">{featured.title}</h2>
+                <h2 className="font-serif text-3xl font-medium leading-tight">
+                  {featured.title}
+                </h2>
                 <p className="text-muted-foreground text-sm line-clamp-4">
                   {featured.content}
                 </p>
@@ -100,7 +100,9 @@ export default function Blog() {
         <section className="container py-12">
           <ScrollReveal>
             <div className="mb-8">
-              <h2 className="text-2xl font-bold">More From the Newsroom</h2>
+              <h2 className="font-serif text-2xl font-medium">
+                More From the Newsroom
+              </h2>
               <p className="text-sm text-muted-foreground">
                 Fresh from the El-Moore editorial desk.
               </p>
@@ -124,7 +126,7 @@ export default function Blog() {
                     )}
                   </div>
                   <div className="p-6">
-                    <h3 className="font-semibold text-foreground group-hover:text-muted-foreground transition-colors">
+                    <h3 className="font-serif font-medium text-lg text-foreground group-hover:text-muted-foreground transition-colors">
                       {post.title}
                     </h3>
                     <p className="text-sm text-muted-foreground mt-1 line-clamp-3">
@@ -147,16 +149,17 @@ export default function Blog() {
       <section className="bg-gradient-green w-full">
         <div className="container py-16">
           <ScrollReveal>
-            <h2 className="text-2xl font-bold italic mb-1 text-white">
+            <h2 className="font-serif text-2xl font-medium italic mb-1 text-white">
               Legal Masterclass
             </h2>
             <p className="text-sm text-white/70 mb-8">
-              Asset protection and regulatory frameworks every investor should know.
+              Asset protection and regulatory frameworks every investor should
+              know.
             </p>
           </ScrollReveal>
           <div className="grid md:grid-cols-2 gap-6">
             <ScrollReveal>
-              <div className="flex gap-6 glass border border-white/10 text-white rounded-md p-6">
+              <div className="flex gap-6 border border-white/10 text-white rounded-md p-6">
                 <div className="w-24 h-32 rounded bg-white/10 shrink-0 flex items-center justify-center">
                   <BookOpen className="h-8 w-8 text-white/50" />
                 </div>
@@ -168,15 +171,15 @@ export default function Blog() {
                     Understanding &quot;Certificate of Occupancy&quot;
                   </h3>
                   <p className="text-sm text-white/70">
-                    The vital document every Nigerian land investor must
-                    master before committing capital.
+                    The vital document every Nigerian land investor must master
+                    before committing capital.
                   </p>
                 </div>
               </div>
             </ScrollReveal>
             <div className="space-y-4">
               <ScrollReveal delay={0.1}>
-                <div className="glass border border-white/10 text-white rounded-md p-5 flex items-start gap-3">
+                <div className="border border-white/10 text-white rounded-md p-5 flex items-start gap-3">
                   <Scale className="h-5 w-5 text-gold mt-0.5 shrink-0" />
                   <div>
                     <h4 className="font-semibold text-sm text-white">
@@ -189,7 +192,7 @@ export default function Blog() {
                 </div>
               </ScrollReveal>
               <ScrollReveal delay={0.2}>
-                <div className="glass border border-white/10 text-white rounded-md p-5 flex items-start gap-3">
+                <div className="border border-white/10 text-white rounded-md p-5 flex items-start gap-3">
                   <Shield className="h-5 w-5 text-gold mt-0.5 shrink-0" />
                   <div>
                     <h4 className="font-semibold text-sm text-white">
@@ -211,12 +214,12 @@ export default function Blog() {
         <ScrollReveal>
           <div className="bg-gradient-green rounded-md p-10 flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
-              <h2 className="text-2xl font-bold italic mb-1 text-white">
+              <h2 className="font-serif text-2xl font-medium italic mb-1 text-white">
                 The Curator&apos;s Digest
               </h2>
               <p className="text-sm text-white/70">
-                Receive our latest architectural and financial analysis
-                directly in your inbox.
+                Receive our latest architectural and financial analysis directly
+                in your inbox.
               </p>
             </div>
             <div className="flex gap-2 w-full md:w-auto">

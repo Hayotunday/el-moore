@@ -51,7 +51,7 @@ function SignInContent() {
               <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-gold text-secondary-foreground">
                 <LogIn className="h-5 w-5" />
               </div>
-              <h1 className="text-2xl font-bold text-white">Welcome back</h1>
+              <h1 className="font-serif text-2xl font-medium text-white">Welcome back</h1>
             </div>
             <p className="text-sm text-white/70 mt-1">
               Sign in to save favorites and track your inspections.

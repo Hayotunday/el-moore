@@ -110,7 +110,7 @@ export default function SignUpPage() {
                   <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-gold text-secondary-foreground">
                     <UserPlus className="h-5 w-5" />
                   </div>
-                  <h1 className="text-2xl font-bold text-white">
+                  <h1 className="font-serif text-2xl font-medium text-white">
                     Create your account
                   </h1>
                 </div>
@@ -261,7 +261,7 @@ export default function SignUpPage() {
                   <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-gold text-secondary-foreground">
                     <ShieldCheck className="h-5 w-5" />
                   </div>
-                  <h1 className="text-2xl font-bold text-white">
+                  <h1 className="font-serif text-2xl font-medium text-white">
                     Verify your email
                   </h1>
                 </div>
@@ -327,7 +327,7 @@ export default function SignUpPage() {
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
                   <ShieldCheck className="h-6 w-6 text-green-600" />
                 </div>
-                <h1 className="text-2xl font-bold text-white mb-2">
+                <h1 className="font-serif text-2xl font-medium text-white mb-2">
                   Email verified
                 </h1>
               </div>

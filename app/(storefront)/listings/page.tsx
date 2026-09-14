@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import PropertyCard from "@/components/property-cards";
 import ScrollReveal from "@/components/scroll-reveal";
 import { listPublicProperties, getPrimaryImages } from "@/lib/api/properties";
@@ -14,12 +15,25 @@ const statusFilters: { label: string; value: PropertyStatus | "ALL" }[] = [
 ];
 
 export default function Listings() {
+  return (
+    <Suspense fallback={null}>
+      <ListingsContent />
+    </Suspense>
+  );
+}
+
+function ListingsContent() {
+  const searchParams = useSearchParams();
   const [properties, setProperties] = useState<Property[]>([]);
   const [images, setImages] = useState<Map<string, string | null>>(new Map());
   const [loading, setLoading] = useState(true);
-  const [locationQuery, setLocationQuery] = useState("");
-  const [status, setStatus] = useState<PropertyStatus | "ALL">("AVAILABLE");
-  const [priceRange, setPriceRange] = useState(2000000000);
+  const [locationQuery, setLocationQuery] = useState(searchParams.get("location") ?? "");
+  const [status, setStatus] = useState<PropertyStatus | "ALL">(
+    (searchParams.get("status") as PropertyStatus | null) ?? "AVAILABLE",
+  );
+  const [priceRange, setPriceRange] = useState(
+    Number(searchParams.get("maxPrice")) || 2000000000,
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -56,10 +70,8 @@ export default function Listings() {
   return (
     <div className="container py-12">
       <ScrollReveal>
-        <p className="text-[10px] uppercase tracking-widest text-gold font-semibold mb-2">
-          The Showroom
-        </p>
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">
+        <p className="eyebrow mb-3">The Showroom</p>
+        <h1 className="font-serif text-3xl font-medium md:text-4xl mb-2">
           Explore Investment Opportunities
         </h1>
         <p className="text-muted-foreground max-w-xl mb-10">

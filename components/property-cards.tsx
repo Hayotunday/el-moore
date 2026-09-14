@@ -69,12 +69,16 @@ export default function PropertyCard({
             <MapPin className="h-3 w-3" />
             <span>{property.location}</span>
           </div>
-          <h3 className="font-semibold text-foreground leading-snug">{property.title}</h3>
+          <h3 className="font-serif text-lg font-medium text-foreground leading-snug">
+            {property.title}
+          </h3>
           <div className="mt-auto flex items-center justify-between pt-3">
             <span className="text-[10px] uppercase tracking-widest text-muted-foreground">
               Entry Value
             </span>
-            <span className="font-bold text-foreground">{formatCurrency(property.price)}</span>
+            <span className="font-serif font-semibold text-gold-deep">
+              {formatCurrency(property.price)}
+            </span>
           </div>
         </div>
       </motion.div>

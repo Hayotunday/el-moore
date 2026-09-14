@@ -132,12 +132,10 @@ function ProfileContent() {
   };
 
   return (
-    <div className="container py-12 max-w-3xl">
+    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 md:px-8">
       <ScrollReveal>
-        <p className="text-[10px] uppercase tracking-widest text-gold font-semibold mb-2">
-          My Account
-        </p>
-        <h1 className="text-3xl md:text-4xl font-bold mb-10">Your Profile</h1>
+        <p className="eyebrow mb-4">My Account</p>
+        <h1 className="font-serif text-3xl md:text-4xl font-medium mb-10">Your Profile</h1>
       </ScrollReveal>
 
       <div className="space-y-6">

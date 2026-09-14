@@ -33,7 +33,7 @@ export default function ForgotPasswordPage() {
                   <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-gold text-secondary-foreground">
                     <KeyRound className="h-5 w-5" />
                   </div>
-                  <h1 className="text-2xl font-bold text-white">
+                  <h1 className="font-serif text-2xl font-medium text-white">
                     Reset your password
                   </h1>
                 </div>
@@ -86,7 +86,7 @@ export default function ForgotPasswordPage() {
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-gold/20">
                 <MessageSquare className="h-6 w-6 text-gold" />
               </div>
-              <h1 className="text-2xl font-bold text-white mb-2">
+              <h1 className="font-serif text-2xl font-medium text-white mb-2">
                 Contact our support team
               </h1>
               <p className="text-sm text-white/70 mb-6">
