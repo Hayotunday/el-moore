@@ -63,7 +63,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-screen flex flex-col" suppressHydrationWarning>
-        <AuthProvider realm="storefront">
+        <AuthProvider>
           <AuthDrawerProvider>
             <ReferralTracker />
             <SplashScreen />
