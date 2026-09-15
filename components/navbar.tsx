@@ -98,9 +98,12 @@ export default function Navbar() {
           </Link>
           {user ? (
             <div className="flex items-center gap-2 pl-1">
-              <span className="text-sm font-medium text-primary-foreground/90">
-                {getShortName(user) || "there"}
-              </span>
+              <Link
+                href="/profile"
+                className="inline-flex items-center gap-2 rounded-md border border-primary-foreground/25 px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary-foreground/10 transition-colors active:scale-[0.97]"
+              >
+                <User className="h-4 w-4" /> {getShortName(user) || "Profile"}
+              </Link>
               <button
                 onClick={handleLogout}
                 title="Sign out"
@@ -164,15 +167,24 @@ export default function Navbar() {
             ))}
             <div className="pt-2 mt-2 border-t border-primary-foreground/10">
               {user ? (
-                <button
-                  onClick={() => {
-                    setOpen(false);
-                    handleLogout();
-                  }}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium text-primary-foreground/70"
-                >
-                  <LogOut className="h-4 w-4" /> Sign out ({getShortName(user) || "there"})
-                </button>
+                <>
+                  <Link
+                    href="/profile"
+                    onClick={() => setOpen(false)}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium text-primary-foreground/70"
+                  >
+                    <User className="h-4 w-4" /> {getShortName(user) || "My Profile"}
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 rounded-sm text-sm font-medium text-primary-foreground/70"
+                  >
+                    <LogOut className="h-4 w-4" /> Sign out
+                  </button>
+                </>
               ) : (
                 <button
                   onClick={() => {
