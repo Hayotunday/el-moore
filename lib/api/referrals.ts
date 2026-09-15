@@ -26,7 +26,7 @@ export async function listReferrals(): Promise<ReferralWithSale[]> {
     .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 }
 
-/** EXTERNAL_MARKETER only — the referrals attributed to the authenticated marketer. */
+/** AFFILIATE_MARKETER only — the referrals attributed to the authenticated marketer. */
 export async function listMyReferrals(): Promise<Referral[]> {
   return apiFetch<Referral[]>("/referrals/mine");
 }
@@ -43,4 +43,16 @@ export async function getReferral(id: string): Promise<Referral> {
 /** OFFICE_ADMIN only. */
 export async function markReferralPaid(id: string): Promise<Referral> {
   return apiFetch<Referral>(`/referrals/${id}/mark-paid`, { method: "PATCH" });
+}
+
+/**
+ * Public — no auth required. Lets a visitor who followed a marketer's referral
+ * link browse that marketer's storefront (see components/referral-tracker.tsx,
+ * which already captures the `?ref=` marketer id for sale attribution). Not
+ * wired into any page yet — there's no dedicated `/ref/[marketerId]`-style
+ * route built for it. Response shape isn't documented; assuming it's at least
+ * the marketer's available property listings.
+ */
+export async function getPublicReferralStorefront(marketerId: string): Promise<unknown> {
+  return apiFetch(`/referrals/public/${marketerId}`);
 }

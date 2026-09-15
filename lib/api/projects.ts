@@ -1,4 +1,5 @@
 import { apiFetch, uploadToPresignedUrl, toPublicR2Url, R2_PUBLIC_BASE_URL } from "./client";
+import { customerApiFetch } from "./customer-auth";
 import type {
   Project,
   ProjectBudgetSummary,
@@ -205,13 +206,14 @@ export async function deleteProjectPhoto(projectId: string, photoId: string): Pr
 
 /* ---------- Customer-facing portal ---------- */
 
-/** Authenticated customer. Projects linked to properties they've purchased. */
+/** Authenticated customer (customer auth, not the staff/basic-role session —
+ *  see lib/api/customer-auth.ts). Projects linked to properties they've purchased. */
 export async function listMyProjects(): Promise<Project[]> {
-  return apiFetch<Project[]>("/customers/me/projects");
+  return customerApiFetch<Project[]>("/customers/me/projects");
 }
 
 /** Authenticated customer. Includes work items and only customer-visible updates/photos.
  *  Only accessible if the customer has a sale linked to a property in this project. */
 export async function getMyProject(id: string): Promise<ProjectDetail> {
-  return apiFetch<ProjectDetail>(`/customers/me/projects/${id}`);
+  return customerApiFetch<ProjectDetail>(`/customers/me/projects/${id}`);
 }
