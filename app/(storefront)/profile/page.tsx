@@ -1,18 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { Camera, Heart, KeyRound, Loader2, LogOut, Save, User as UserIcon } from "lucide-react";
+import { Heart, LogOut, User as UserIcon } from "lucide-react";
 import ScrollReveal from "@/components/scroll-reveal";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
 import { useAuthDrawer } from "@/contexts/auth-drawer-context";
 import { useFavorites } from "@/hooks/useFavorites";
-import { updateUser, uploadUserAvatar, removeUserAvatar } from "@/lib/api/users";
-import { formatDate, getFullName, getInitials } from "@/lib/utils";
+import { listMyProperties, listMySales } from "@/lib/api/customer-portal";
+import { formatCurrency, formatDate, getFullName, getInitials } from "@/lib/utils";
+import type { Property, Sale } from "@/lib/api/types";
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -40,91 +39,31 @@ export default function ProfilePage() {
 }
 
 function ProfileContent() {
-  const { user, refreshProfile, logout } = useAuth();
+  const { user, logout } = useAuth();
   const { favorites } = useFavorites();
 
-  const [firstName, setFirstName] = useState(user?.firstName ?? "");
-  const [middleName, setMiddleName] = useState(user?.middleName ?? "");
-  const [lastName, setLastName] = useState(user?.lastName ?? "");
-  const [email, setEmail] = useState(user?.email ?? "");
-  const [savingProfile, setSavingProfile] = useState(false);
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [sales, setSales] = useState<Sale[]>([]);
+  const [loadingPortal, setLoadingPortal] = useState(true);
 
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [savingPassword, setSavingPassword] = useState(false);
-
-  const [uploadingAvatar, setUploadingAvatar] = useState(false);
-  const [removingAvatar, setRemovingAvatar] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([listMyProperties().catch(() => []), listMySales().catch(() => [])]).then(
+      ([p, s]) => {
+        if (cancelled) return;
+        setProperties(p);
+        setSales(s);
+        setLoadingPortal(false);
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   if (!user) return null;
 
   const initials = getInitials(user);
-
-  const handleSaveProfile = async () => {
-    if (!firstName || !lastName || !email) {
-      toast.error("First name, last name and email are required.");
-      return;
-    }
-    setSavingProfile(true);
-    try {
-      await updateUser(user.id, { firstName, middleName: middleName || undefined, lastName, email });
-      await refreshProfile();
-      toast.success("Profile updated.");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not update profile.");
-    } finally {
-      setSavingProfile(false);
-    }
-  };
-
-  const handleChangePassword = async () => {
-    if (newPassword.length < 8) {
-      toast.error("Password must be at least 8 characters.");
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      toast.error("Passwords do not match.");
-      return;
-    }
-    setSavingPassword(true);
-    try {
-      await updateUser(user.id, { password: newPassword });
-      toast.success("Password changed.");
-      setNewPassword("");
-      setConfirmPassword("");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not change password.");
-    } finally {
-      setSavingPassword(false);
-    }
-  };
-
-  const handleAvatarChange = async (file: File | null) => {
-    if (!file) return;
-    setUploadingAvatar(true);
-    try {
-      await uploadUserAvatar(user.id, file);
-      await refreshProfile();
-      toast.success("Photo updated.");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not upload photo.");
-    } finally {
-      setUploadingAvatar(false);
-    }
-  };
-
-  const handleRemoveAvatar = async () => {
-    setRemovingAvatar(true);
-    try {
-      await removeUserAvatar(user.id);
-      await refreshProfile();
-      toast.success("Photo removed.");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not remove photo.");
-    } finally {
-      setRemovingAvatar(false);
-    }
-  };
 
   const handleSignOut = async () => {
     await logout();
@@ -142,57 +81,20 @@ function ProfileContent() {
         {/* Identity */}
         <ScrollReveal>
           <div className="rounded-md bg-card p-6 shadow-ambient flex flex-col sm:flex-row gap-6 sm:items-center">
-            <div className="relative shrink-0">
-              {user.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={user.avatarUrl}
-                  alt={getFullName(user)}
-                  className="h-20 w-20 rounded-full object-cover"
-                />
-              ) : (
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gold text-secondary-foreground text-xl font-bold">
-                  {initials}
-                </div>
-              )}
-              <label className="absolute -bottom-1 -right-1 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-primary-foreground shadow-ambient hover:bg-primary/90 transition-colors">
-                {uploadingAvatar ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Camera className="h-4 w-4" />
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  disabled={uploadingAvatar}
-                  onChange={(e) => {
-                    handleAvatarChange(e.target.files?.[0] ?? null);
-                    e.target.value = "";
-                  }}
-                />
-              </label>
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gold text-secondary-foreground text-xl font-bold">
+              {initials}
             </div>
             <div className="flex-1 space-y-1">
               <h2 className="text-lg font-semibold text-foreground">{getFullName(user)}</h2>
-              <p className="text-sm text-muted-foreground">{user.email}</p>
+              {user.email && <p className="text-sm text-muted-foreground">{user.email}</p>}
+              <p className="text-sm text-muted-foreground">{user.phone}</p>
               {user.createdAt && (
                 <p className="text-xs text-muted-foreground pt-1">
                   Member since {formatDate(user.createdAt)}
                 </p>
               )}
             </div>
-            <div className="flex flex-col gap-2 shrink-0">
-              {user.avatarUrl && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={removingAvatar}
-                  onClick={handleRemoveAvatar}
-                >
-                  {removingAvatar ? "Removing…" : "Remove Photo"}
-                </Button>
-              )}
+            <div className="shrink-0">
               <Button variant="outline" size="sm" onClick={handleSignOut}>
                 <LogOut className="h-4 w-4" /> Sign Out
               </Button>
@@ -222,68 +124,72 @@ function ProfileContent() {
           </Link>
         </ScrollReveal>
 
-        {/* Profile details */}
+        {/* My properties */}
         <ScrollReveal delay={0.1}>
           <div className="rounded-md bg-card p-6 shadow-ambient space-y-4">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              Profile Details
+              My Properties
             </h3>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label>First Name</Label>
-                <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+            {loadingPortal ? (
+              <div className="h-16 rounded-md bg-muted animate-pulse" />
+            ) : properties.length > 0 ? (
+              <div className="space-y-3">
+                {properties.map((property) => (
+                  <Link
+                    key={property.id}
+                    href={`/listings/${property.id}`}
+                    className="flex items-center justify-between gap-4 rounded-md border border-border p-4 hover:border-foreground/30 transition-colors"
+                  >
+                    <div>
+                      <p className="font-medium text-foreground">{property.title}</p>
+                      <p className="text-sm text-muted-foreground">{property.location}</p>
+                    </div>
+                    <span className="text-sm font-semibold text-foreground whitespace-nowrap">
+                      {formatCurrency(property.price)}
+                    </span>
+                  </Link>
+                ))}
               </div>
-              <div className="grid gap-2">
-                <Label>Last Name</Label>
-                <Input value={lastName} onChange={(e) => setLastName(e.target.value)} />
-              </div>
-              <div className="grid gap-2">
-                <Label>Middle Name (optional)</Label>
-                <Input value={middleName} onChange={(e) => setMiddleName(e.target.value)} />
-              </div>
-              <div className="grid gap-2">
-                <Label>Email</Label>
-                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <Button onClick={handleSaveProfile} disabled={savingProfile}>
-                <Save className="h-4 w-4" /> {savingProfile ? "Saving…" : "Save Changes"}
-              </Button>
-            </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Properties you purchase with El-Moore will appear here.
+              </p>
+            )}
           </div>
         </ScrollReveal>
 
-        {/* Password */}
+        {/* My sales */}
         <ScrollReveal delay={0.15}>
           <div className="rounded-md bg-card p-6 shadow-ambient space-y-4">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-              Change Password
+              Purchase History
             </h3>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label>New Password</Label>
-                <Input
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="At least 8 characters"
-                />
+            {loadingPortal ? (
+              <div className="h-16 rounded-md bg-muted animate-pulse" />
+            ) : sales.length > 0 ? (
+              <div className="space-y-3">
+                {sales.map((sale) => (
+                  <div
+                    key={sale.id}
+                    className="flex items-center justify-between gap-4 rounded-md border border-border p-4"
+                  >
+                    <div>
+                      <p className="font-medium text-foreground">
+                        {sale.saleType === "INSTALLMENT" ? "Installment Plan" : "Outright Purchase"}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {sale.createdAt ? formatDate(sale.createdAt) : ""}
+                      </p>
+                    </div>
+                    <span className="text-sm font-semibold text-foreground whitespace-nowrap">
+                      {formatCurrency(sale.totalAmount)}
+                    </span>
+                  </div>
+                ))}
               </div>
-              <div className="grid gap-2">
-                <Label>Confirm New Password</Label>
-                <Input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <Button onClick={handleChangePassword} disabled={savingPassword}>
-                <KeyRound className="h-4 w-4" /> {savingPassword ? "Updating…" : "Update Password"}
-              </Button>
-            </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No purchases on record yet.</p>
+            )}
           </div>
         </ScrollReveal>
       </div>

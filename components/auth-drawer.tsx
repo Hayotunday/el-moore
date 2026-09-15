@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ArrowRight, Lock, Mail, ShieldCheck, User } from "lucide-react";
+import { ArrowRight, Lock, Mail, Phone, ShieldCheck, User } from "lucide-react";
 import {
   Drawer,
   DrawerContent,
@@ -16,7 +16,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
 import { useAuthDrawer } from "@/contexts/auth-drawer-context";
-import { registerUser, verifyCode, resendVerification } from "@/lib/api/auth";
+import {
+  registerCustomer,
+  verifyCustomerCode,
+  resendCustomerVerification,
+  checkCustomerEmailExists,
+} from "@/lib/api/customer-auth";
 
 type Step = "form" | "verify";
 
@@ -25,6 +30,7 @@ const EMPTY_SIGNUP = {
   firstName: "",
   middleName: "",
   lastName: "",
+  phone: "",
   email: "",
   password: "",
   confirmPassword: "",
@@ -41,6 +47,10 @@ export default function AuthDrawer() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [resending, setResending] = useState(false);
+  /** Set when signup finds the email already belongs to a staff-created
+   *  Customer record — shown as a "claim your account" nudge instead of
+   *  letting registerCustomer() fail on a duplicate-email error. */
+  const [existingAccountEmail, setExistingAccountEmail] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -49,6 +59,7 @@ export default function AuthDrawer() {
     setSignup(EMPTY_SIGNUP);
     setCode("");
     setError(null);
+    setExistingAccountEmail(null);
   }, [isOpen, view]);
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -69,6 +80,7 @@ export default function AuthDrawer() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setExistingAccountEmail(null);
 
     if (signup.password.length < 8) {
       setError("Password must be at least 8 characters.");
@@ -81,10 +93,16 @@ export default function AuthDrawer() {
 
     setSubmitting(true);
     try {
-      await registerUser({
+      const exists = await checkCustomerEmailExists(signup.email);
+      if (exists) {
+        setExistingAccountEmail(signup.email);
+        return;
+      }
+      await registerCustomer({
         firstName: signup.firstName,
         middleName: signup.middleName || undefined,
-        lastName: signup.lastName,
+        lastName: signup.lastName || undefined,
+        phone: signup.phone,
         email: signup.email,
         password: signup.password,
       });
@@ -103,7 +121,7 @@ export default function AuthDrawer() {
     setError(null);
     setSubmitting(true);
     try {
-      await verifyCode({ email: signup.email, code });
+      await verifyCustomerCode({ email: signup.email, code });
       toast.success("Email verified — you can now sign in.");
       setSignin({ email: signup.email, password: "" });
       setStep("form");
@@ -118,7 +136,7 @@ export default function AuthDrawer() {
   const handleResend = async () => {
     setResending(true);
     try {
-      await resendVerification(signup.email);
+      await resendCustomerVerification(signup.email);
       toast.success("Verification code resent.");
     } catch (err) {
       toast.error(
@@ -298,6 +316,24 @@ export default function AuthDrawer() {
                   </div>
                   <div className="space-y-2">
                     <Label
+                      htmlFor="drawer-signup-phone"
+                      className="flex items-center gap-2"
+                    >
+                      <Phone className="h-4 w-4" /> Phone
+                    </Label>
+                    <Input
+                      id="drawer-signup-phone"
+                      type="tel"
+                      required
+                      value={signup.phone}
+                      onChange={(e) =>
+                        setSignup((f) => ({ ...f, phone: e.target.value }))
+                      }
+                      placeholder="080..."
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label
                       htmlFor="drawer-signup-password"
                       className="flex items-center gap-2"
                     >
@@ -331,6 +367,23 @@ export default function AuthDrawer() {
                       }
                     />
                   </div>
+
+                  {existingAccountEmail && (
+                    <div className="rounded-md bg-gold/15 px-3 py-2.5 text-sm text-foreground">
+                      An account already exists for{" "}
+                      <span className="font-medium">{existingAccountEmail}</span> — if
+                      you&apos;ve purchased a property with us before, this may already be
+                      set up for you.{" "}
+                      <a
+                        href={`/claim-account?email=${encodeURIComponent(existingAccountEmail)}`}
+                        onClick={close}
+                        className="font-semibold underline underline-offset-2"
+                      >
+                        Claim your account
+                      </a>
+                      .
+                    </div>
+                  )}
 
                   {error && (
                     <p className="text-sm text-destructive bg-destructive/10 rounded-md px-3 py-2">

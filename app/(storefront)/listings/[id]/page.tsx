@@ -36,7 +36,7 @@ export default function PropertyPage() {
 
   useEffect(() => {
     if (!user) return;
-    setFormData((f) => ({ ...f, name: f.name || getFullName(user), email: f.email || user.email }));
+    setFormData((f) => ({ ...f, name: f.name || getFullName(user), email: f.email || user.email || "" }));
   }, [user]);
 
   useEffect(() => {

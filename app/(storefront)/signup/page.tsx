@@ -7,6 +7,7 @@ import {
   ArrowRight,
   Lock,
   Mail,
+  Phone,
   ShieldCheck,
   User,
   UserPlus,
@@ -15,7 +16,12 @@ import ScrollReveal from "@/components/scroll-reveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { registerUser, verifyCode, resendVerification } from "@/lib/api/auth";
+import {
+  registerCustomer,
+  verifyCustomerCode,
+  resendCustomerVerification,
+  checkCustomerEmailExists,
+} from "@/lib/api/customer-auth";
 
 type Step = "form" | "verify" | "done";
 
@@ -25,6 +31,7 @@ export default function SignUpPage() {
     firstName: "",
     middleName: "",
     lastName: "",
+    phone: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -33,10 +40,15 @@ export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [resending, setResending] = useState(false);
+  /** Set when signup finds the email already belongs to a staff-created
+   *  Customer record — shown as a "claim your account" nudge instead of
+   *  letting registerCustomer() fail on a duplicate-email error. */
+  const [existingAccountEmail, setExistingAccountEmail] = useState<string | null>(null);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setExistingAccountEmail(null);
 
     if (form.password.length < 8) {
       setError("Password must be at least 8 characters.");
@@ -49,10 +61,16 @@ export default function SignUpPage() {
 
     setSubmitting(true);
     try {
-      await registerUser({
+      const exists = await checkCustomerEmailExists(form.email);
+      if (exists) {
+        setExistingAccountEmail(form.email);
+        return;
+      }
+      await registerCustomer({
         firstName: form.firstName,
         middleName: form.middleName || undefined,
-        lastName: form.lastName,
+        lastName: form.lastName || undefined,
+        phone: form.phone,
         email: form.email,
         password: form.password,
       });
@@ -71,7 +89,7 @@ export default function SignUpPage() {
     setError(null);
     setSubmitting(true);
     try {
-      await verifyCode({ email: form.email, code });
+      await verifyCustomerCode({ email: form.email, code });
       setStep("done");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Invalid or expired code.");
@@ -83,7 +101,7 @@ export default function SignUpPage() {
   const handleResend = async () => {
     setResending(true);
     try {
-      await resendVerification(form.email);
+      await resendCustomerVerification(form.email);
       toast.success("Verification code resent.");
     } catch (err) {
       toast.error(
@@ -190,6 +208,25 @@ export default function SignUpPage() {
                 </div>
                 <div className="space-y-2">
                   <Label
+                    htmlFor="phone"
+                    className="flex items-center gap-2 text-white/80"
+                  >
+                    <Phone className="h-4 w-4" /> Phone
+                  </Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    required
+                    value={form.phone}
+                    onChange={(e) =>
+                      setForm((f) => ({ ...f, phone: e.target.value }))
+                    }
+                    placeholder="080..."
+                    className="bg-white/95"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label
                     htmlFor="password"
                     className="flex items-center gap-2 text-white/80"
                   >
@@ -225,6 +262,22 @@ export default function SignUpPage() {
                     className="bg-white/95"
                   />
                 </div>
+
+                {existingAccountEmail && (
+                  <div className="rounded-md bg-gold/20 px-3 py-2.5 text-sm text-white">
+                    An account already exists for{" "}
+                    <span className="font-medium">{existingAccountEmail}</span> — if
+                    you&apos;ve purchased a property with us before, this may already be
+                    set up for you.{" "}
+                    <Link
+                      href={`/claim-account?email=${encodeURIComponent(existingAccountEmail)}`}
+                      className="font-semibold underline underline-offset-2"
+                    >
+                      Claim your account
+                    </Link>
+                    .
+                  </div>
+                )}
 
                 {error && (
                   <p className="text-sm text-white bg-destructive/80 rounded-md px-3 py-2">
