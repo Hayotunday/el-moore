@@ -1,26 +1,70 @@
-import { useSyncExternalStore, useCallback } from "react";
-import { getFavorites, toggleFavorite, subscribe } from "@/lib/favorites";
+"use client";
 
-const SERVER_SNAPSHOT: string[] = [];
-const getServerSnapshot = () => SERVER_SNAPSHOT;
+import { useCallback, useEffect, useState } from "react";
+import { useAuth } from "@/contexts/auth-context";
+import { useAuthDrawer } from "@/contexts/auth-drawer-context";
+import {
+  listMyFavorites,
+  addFavorite,
+  removeFavorite,
+} from "@/lib/api/customer-portal";
 
 export function useFavorites() {
-  const favorites = useSyncExternalStore(
-    subscribe,
-    getFavorites,
-    getServerSnapshot,
-  );
+  const { user } = useAuth();
+  const { open: openAuthDrawer } = useAuthDrawer();
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const toggle = useCallback((id: string) => {
-    toggleFavorite(id);
-  }, []);
+  useEffect(() => {
+    if (!user) {
+      setFavorites([]);
+      setIsLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setIsLoading(true);
+    listMyFavorites()
+      .then((properties) => {
+        if (!cancelled) setFavorites(properties.map((p) => p.id));
+      })
+      .catch(() => {
+        if (!cancelled) setFavorites([]);
+      })
+      .finally(() => {
+        if (!cancelled) setIsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
-  const check = useCallback(
-    (id: string) => {
-      return favorites.includes(id);
-    },
+  const isFavorite = useCallback(
+    (id: string) => favorites.includes(id),
     [favorites],
   );
 
-  return { favorites, toggle, isFavorite: check };
+  const toggle = useCallback(
+    async (id: string) => {
+      if (!user) {
+        openAuthDrawer("signin");
+        return;
+      }
+      const wasFavorite = favorites.includes(id);
+      // Optimistic update, rolled back if the request fails.
+      setFavorites((prev) =>
+        wasFavorite ? prev.filter((f) => f !== id) : [...prev, id],
+      );
+      try {
+        if (wasFavorite) await removeFavorite(id);
+        else await addFavorite(id);
+      } catch {
+        setFavorites((prev) =>
+          wasFavorite ? [...prev, id] : prev.filter((f) => f !== id),
+        );
+      }
+    },
+    [user, favorites, openAuthDrawer],
+  );
+
+  return { favorites, toggle, isFavorite, isLoading };
 }
