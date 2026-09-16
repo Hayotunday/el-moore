@@ -59,7 +59,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", axiforma.variable, fraunces.variable, "font-sans")}
+      className={cn(
+        "h-full",
+        "antialiased",
+        axiforma.variable,
+        fraunces.variable,
+        "font-sans",
+      )}
       suppressHydrationWarning
     >
       <body className="min-h-screen flex flex-col" suppressHydrationWarning>
@@ -68,9 +74,7 @@ export default function RootLayout({
             <ReferralTracker />
             <SplashScreen />
             <Navbar />
-            <main className="flex-1">
-              {children}
-            </main>
+            <main className="flex-1">{children}</main>
             <Footer />
             <ChatbotFab />
             <AuthDrawer />

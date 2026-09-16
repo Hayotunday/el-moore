@@ -5,7 +5,7 @@ import { MessageCircle } from "lucide-react";
 export default function ChatbotFab() {
   return (
     <a
-      href="https://wa.me/2348000000000"
+      href="#"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with El-Moore on WhatsApp"

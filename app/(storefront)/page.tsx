@@ -611,36 +611,38 @@ export default function Lobby() {
 
       {/* Newsletter */}
       <section className="w-full bg-primary">
-        <ScrollReveal className="container flex flex-wrap items-center justify-between gap-8 py-24">
-          <div>
-            <h2 className="font-serif text-2xl font-medium text-primary-foreground max-w-[22ch]">
-              The Curator&apos;s Digest
-            </h2>
-            <p className="mt-2 max-w-[34ch] text-sm text-primary-foreground/65">
-              Bi-weekly architectural and financial analysis, straight to your
-              inbox.
-            </p>
-          </div>
-          <form
-            onSubmit={handleSubscribe}
-            className="flex shrink-0 gap-2.5 max-sm:w-full max-sm:flex-col"
-          >
-            <input
-              type="email"
-              required
-              value={newsletterEmail}
-              onChange={(e) => setNewsletterEmail(e.target.value)}
-              placeholder="professional@email.com"
-              className="min-w-64 rounded-md border border-white/25 bg-transparent px-5 py-3.5 text-sm text-white placeholder:text-white/45 focus:border-gold focus:outline-none max-sm:min-w-0"
-            />
-            <button
-              type="submit"
-              disabled={subscribing}
-              className="whitespace-nowrap rounded-md bg-gold px-6.5 py-3.5 text-sm font-bold text-secondary-foreground transition-colors hover:bg-gold/90 disabled:opacity-60"
+        <ScrollReveal className="container py-24">
+          <div className="w-full flex flex-wrap items-center justify-between gap-8">
+            <div className="">
+              <h2 className="font-serif text-2xl font-medium text-primary-foreground max-w-[22ch]">
+                The Curator&apos;s Digest
+              </h2>
+              <p className="mt-2 max-w-[34ch] text-sm text-primary-foreground/65">
+                Bi-weekly architectural and financial analysis, straight to your
+                inbox.
+              </p>
+            </div>
+            <form
+              onSubmit={handleSubscribe}
+              className="flex shrink-0 gap-2.5 max-sm:w-full max-sm:flex-col"
             >
-              {subscribing ? "Subscribing…" : "Subscribe"}
-            </button>
-          </form>
+              <input
+                type="email"
+                required
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
+                placeholder="professional@email.com"
+                className="min-w-64 rounded-md border border-white/25 bg-transparent px-5 py-3.5 text-sm text-white placeholder:text-white/45 focus:border-gold focus:outline-none max-sm:min-w-0"
+              />
+              <button
+                type="submit"
+                disabled={subscribing}
+                className="whitespace-nowrap rounded-md bg-gold px-6.5 py-3.5 text-sm font-bold text-secondary-foreground transition-colors hover:bg-gold/90 disabled:opacity-60"
+              >
+                {subscribing ? "Subscribing…" : "Subscribe"}
+              </button>
+            </form>
+          </div>
         </ScrollReveal>
       </section>
     </div>
