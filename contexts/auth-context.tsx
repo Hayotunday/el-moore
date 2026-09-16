@@ -6,12 +6,21 @@ import type { Customer } from "@/lib/api/types";
 
 export type User = Customer;
 
+export interface UpdateProfileInput {
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+  phone?: string;
+  dateOfBirth?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
   refreshProfile: () => Promise<User>;
+  updateProfile: (input: UpdateProfileInput) => Promise<User>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -89,7 +98,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return freshUser;
   };
 
-  const value: AuthContextType = { user, isLoading, login, logout, refreshProfile };
+  const updateProfile = async (input: UpdateProfileInput) => {
+    const updatedUser = await customerAuth.updateMyProfile(input);
+    window.localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
+    setUser(updatedUser);
+    return updatedUser;
+  };
+
+  const value: AuthContextType = { user, isLoading, login, logout, refreshProfile, updateProfile };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

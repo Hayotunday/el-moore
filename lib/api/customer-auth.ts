@@ -213,6 +213,26 @@ export async function getCustomerProfile(): Promise<Customer> {
   return customerApiFetch<Customer>("/customers/me/auth/me");
 }
 
+/**
+ * Updates the authenticated customer's own profile — first/middle/last name,
+ * phone, and date of birth. Note this is a different path than the rest of
+ * this file (/customers/me/profile, not /customers/me/auth/*) but still
+ * goes through customerApiFetch since it needs the same customer token.
+ * Email isn't editable here — there's no endpoint for changing it.
+ */
+export async function updateMyProfile(input: {
+  firstName?: string;
+  middleName?: string;
+  lastName?: string;
+  phone?: string;
+  dateOfBirth?: string;
+}): Promise<Customer> {
+  return customerApiFetch<Customer>("/customers/me/profile", {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  });
+}
+
 export async function logoutCustomer(): Promise<void> {
   try {
     await customerApiFetch<void>("/customers/me/auth/logout", { method: "POST" });

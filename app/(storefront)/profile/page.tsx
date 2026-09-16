@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { Heart, LogOut, User as UserIcon } from "lucide-react";
+import { Heart, LogOut, Pencil, User as UserIcon, X } from "lucide-react";
 import ScrollReveal from "@/components/scroll-reveal";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
 import { useAuthDrawer } from "@/contexts/auth-drawer-context";
 import { useFavorites } from "@/hooks/useFavorites";
@@ -39,12 +41,22 @@ export default function ProfilePage() {
 }
 
 function ProfileContent() {
-  const { user, logout } = useAuth();
+  const { user, logout, updateProfile } = useAuth();
   const { favorites } = useFavorites();
 
   const [properties, setProperties] = useState<Property[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
   const [loadingPortal, setLoadingPortal] = useState(true);
+
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    firstName: user?.firstName ?? "",
+    middleName: user?.middleName ?? "",
+    lastName: user?.lastName ?? "",
+    phone: user?.phone ?? "",
+    dateOfBirth: user?.dateOfBirth?.slice(0, 10) ?? "",
+  });
 
   useEffect(() => {
     let cancelled = false;
@@ -70,6 +82,40 @@ function ProfileContent() {
     toast.success("Signed out.");
   };
 
+  const startEditing = () => {
+    setForm({
+      firstName: user.firstName ?? "",
+      middleName: user.middleName ?? "",
+      lastName: user.lastName ?? "",
+      phone: user.phone ?? "",
+      dateOfBirth: user.dateOfBirth?.slice(0, 10) ?? "",
+    });
+    setEditing(true);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!form.firstName.trim() || !form.phone.trim()) {
+      toast.error("First name and phone are required.");
+      return;
+    }
+    setSaving(true);
+    try {
+      await updateProfile({
+        firstName: form.firstName.trim(),
+        middleName: form.middleName.trim() || undefined,
+        lastName: form.lastName.trim() || undefined,
+        phone: form.phone.trim(),
+        dateOfBirth: form.dateOfBirth || undefined,
+      });
+      toast.success("Profile updated.");
+      setEditing(false);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not update profile.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 md:px-8">
       <ScrollReveal>
@@ -80,25 +126,106 @@ function ProfileContent() {
       <div className="space-y-6">
         {/* Identity */}
         <ScrollReveal>
-          <div className="rounded-md bg-card p-6 shadow-ambient flex flex-col sm:flex-row gap-6 sm:items-center">
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gold text-secondary-foreground text-xl font-bold">
-              {initials}
-            </div>
-            <div className="flex-1 space-y-1">
-              <h2 className="text-lg font-semibold text-foreground">{getFullName(user)}</h2>
-              {user.email && <p className="text-sm text-muted-foreground">{user.email}</p>}
-              <p className="text-sm text-muted-foreground">{user.phone}</p>
-              {user.createdAt && (
-                <p className="text-xs text-muted-foreground pt-1">
-                  Member since {formatDate(user.createdAt)}
-                </p>
-              )}
-            </div>
-            <div className="shrink-0">
-              <Button variant="outline" size="sm" onClick={handleSignOut}>
-                <LogOut className="h-4 w-4" /> Sign Out
-              </Button>
-            </div>
+          <div className="rounded-md bg-card p-6 shadow-ambient">
+            {editing ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                    Edit Profile
+                  </h3>
+                  <button
+                    onClick={() => setEditing(false)}
+                    aria-label="Cancel editing"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label>First Name</Label>
+                    <Input
+                      value={form.firstName}
+                      onChange={(e) => setForm((f) => ({ ...f, firstName: e.target.value }))}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>Last Name</Label>
+                    <Input
+                      value={form.lastName}
+                      onChange={(e) => setForm((f) => ({ ...f, lastName: e.target.value }))}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>Middle Name (optional)</Label>
+                    <Input
+                      value={form.middleName}
+                      onChange={(e) => setForm((f) => ({ ...f, middleName: e.target.value }))}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>Phone</Label>
+                    <Input
+                      type="tel"
+                      value={form.phone}
+                      onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>Date of Birth</Label>
+                    <Input
+                      type="date"
+                      value={form.dateOfBirth}
+                      onChange={(e) => setForm((f) => ({ ...f, dateOfBirth: e.target.value }))}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label>Email</Label>
+                    <Input value={user.email ?? ""} disabled />
+                    <p className="text-xs text-muted-foreground">
+                      Contact support to change the email on your account.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2">
+                  <Button variant="outline" onClick={() => setEditing(false)} disabled={saving}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleSaveProfile} disabled={saving}>
+                    {saving ? "Saving…" : "Save Changes"}
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-6 sm:items-center">
+                <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-gold text-secondary-foreground text-xl font-bold">
+                  {initials}
+                </div>
+                <div className="flex-1 space-y-1">
+                  <h2 className="text-lg font-semibold text-foreground">{getFullName(user)}</h2>
+                  {user.email && <p className="text-sm text-muted-foreground">{user.email}</p>}
+                  <p className="text-sm text-muted-foreground">{user.phone}</p>
+                  {user.dateOfBirth && (
+                    <p className="text-sm text-muted-foreground">
+                      Born {formatDate(user.dateOfBirth)}
+                    </p>
+                  )}
+                  {user.createdAt && (
+                    <p className="text-xs text-muted-foreground pt-1">
+                      Member since {formatDate(user.createdAt)}
+                    </p>
+                  )}
+                </div>
+                <div className="flex shrink-0 gap-2">
+                  <Button variant="outline" size="sm" onClick={startEditing}>
+                    <Pencil className="h-4 w-4" /> Edit Profile
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={handleSignOut}>
+                    <LogOut className="h-4 w-4" /> Sign Out
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </ScrollReveal>
 
