@@ -22,8 +22,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { toast } from "sonner";
 import ScrollReveal from "@/components/scroll-reveal";
 import AnimatedCounter from "@/components/animated-counter";
-import { useFavorites } from "@/hooks/useFavorites";
+import { useAuth } from "@/contexts/auth-context";
+import { useAuthDrawer } from "@/contexts/auth-drawer-context";
 import { listPublicProperties, getPrimaryImages } from "@/lib/api/properties";
+import { addFavorite, removeFavorite } from "@/lib/api/customer-portal";
 import { subscribe } from "@/lib/api/newsletter";
 import { formatCurrency } from "@/lib/utils";
 import type { Property } from "@/lib/api/types";
@@ -163,7 +165,8 @@ const faqs = [
 ];
 
 export default function Lobby() {
-  const { toggle, isFavorite } = useFavorites();
+  const { user } = useAuth();
+  const { open: openAuthDrawer } = useAuthDrawer();
   const [properties, setProperties] = useState<Property[]>([]);
   const [images, setImages] = useState<Map<string, string | null>>(new Map());
   const [loading, setLoading] = useState(true);
@@ -217,6 +220,33 @@ export default function Lobby() {
     [properties],
   );
   const featuredProperty = available[0];
+
+  // Seeded from featuredProperty.isFavorited (listPublicProperties() attaches
+  // it per-item for a signed-in customer), kept local so the heart flips
+  // instantly on tap rather than waiting on a refetch.
+  const [featuredFav, setFeaturedFav] = useState(false);
+  useEffect(() => {
+    setFeaturedFav(featuredProperty?.isFavorited ?? false);
+  }, [featuredProperty?.id, featuredProperty?.isFavorited]);
+
+  const handleToggleFeaturedFavorite = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!featuredProperty) return;
+    if (!user) {
+      openAuthDrawer("signin");
+      return;
+    }
+    const next = !featuredFav;
+    setFeaturedFav(next);
+    try {
+      if (next) await addFavorite(featuredProperty.id);
+      else await removeFavorite(featuredProperty.id);
+    } catch (err) {
+      setFeaturedFav(!next);
+      toast.error(err instanceof Error ? err.message : "Could not update favorites.");
+    }
+  };
+
   const cities = useMemo(
     () => new Set(properties.map((p) => p.location.split(",")[0].trim())).size,
     [properties],
@@ -413,20 +443,11 @@ export default function Lobby() {
                   {statusLabel(featuredProperty.status)}
                 </span>
                 <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    toggle(featuredProperty.id);
-                  }}
-                  aria-label={
-                    isFavorite(featuredProperty.id)
-                      ? "Remove from saved properties"
-                      : "Save property"
-                  }
+                  onClick={handleToggleFeaturedFavorite}
+                  aria-label={featuredFav ? "Remove from saved properties" : "Save property"}
                   className="absolute top-5 right-5 z-10 flex h-9.5 w-9.5 items-center justify-center rounded-full bg-[rgba(8,17,15,0.5)] text-white"
                 >
-                  <Heart
-                    className={`h-4 w-4 ${isFavorite(featuredProperty.id) ? "fill-red-500 text-red-500" : ""}`}
-                  />
+                  <Heart className={`h-4 w-4 ${featuredFav ? "fill-red-500 text-red-500" : ""}`} />
                 </button>
                 <div className="relative z-10 flex items-end justify-between gap-4 p-7">
                   <div>

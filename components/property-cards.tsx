@@ -1,7 +1,11 @@
+import { useEffect, useState } from "react";
 import { Heart, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useFavorites } from "@/hooks/useFavorites";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/auth-context";
+import { useAuthDrawer } from "@/contexts/auth-drawer-context";
+import { addFavorite, removeFavorite } from "@/lib/api/customer-portal";
 import { formatCurrency } from "@/lib/utils";
 import type { Property } from "@/lib/api/types";
 
@@ -12,8 +16,34 @@ export default function PropertyCard({
   property: Property;
   imageUrl?: string | null;
 }) {
-  const { toggle, isFavorite } = useFavorites();
-  const fav = isFavorite(property.id);
+  const { user } = useAuth();
+  const { open: openAuthDrawer } = useAuthDrawer();
+  // Seeded from the property itself (listPublicProperties() attaches
+  // isFavorited per-item for a signed-in customer) rather than a separate
+  // favorites lookup — kept in local state so the heart can flip instantly
+  // on tap without waiting on the parent to refetch its list.
+  const [fav, setFav] = useState(property.isFavorited ?? false);
+
+  useEffect(() => {
+    setFav(property.isFavorited ?? false);
+  }, [property.isFavorited]);
+
+  const handleToggleFavorite = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!user) {
+      openAuthDrawer("signin");
+      return;
+    }
+    const next = !fav;
+    setFav(next);
+    try {
+      if (next) await addFavorite(property.id);
+      else await removeFavorite(property.id);
+    } catch (err) {
+      setFav(!next);
+      toast.error(err instanceof Error ? err.message : "Could not update favorites.");
+    }
+  };
 
   return (
     <Link href={`/listings/${property.id}`} className="group block h-full">
@@ -37,10 +67,7 @@ export default function PropertyCard({
             </div>
           )}
           <button
-            onClick={(e) => {
-              e.preventDefault();
-              toggle(property.id);
-            }}
+            onClick={handleToggleFavorite}
             aria-label={fav ? "Remove from saved properties" : "Save property"}
             className="absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-full glass transition-colors active:scale-95"
           >

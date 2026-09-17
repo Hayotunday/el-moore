@@ -27,8 +27,12 @@ export default function SavedProperties() {
     let cancelled = false;
     setLoading(true);
     listMyFavorites()
-      .then(async (list) => {
+      .then(async (rawList) => {
         if (cancelled) return;
+        // Every item here is a favorite by definition — set explicitly in
+        // case this endpoint doesn't itself echo isFavorited back, so
+        // PropertyCard's heart always renders filled on this page.
+        const list = rawList.map((p) => ({ ...p, isFavorited: true }));
         setProperties(list);
         setLoading(false);
         const imgs = await getPrimaryImages(list.map((p) => p.id));

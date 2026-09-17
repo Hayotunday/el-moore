@@ -1,17 +1,21 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
-import { useAuthDrawer } from "@/contexts/auth-drawer-context";
-import {
-  listMyFavorites,
-  addFavorite,
-  removeFavorite,
-} from "@/lib/api/customer-portal";
+import { listMyFavorites } from "@/lib/api/customer-portal";
 
+/**
+ * Just the count/list of the signed-in customer's favorited property IDs —
+ * for the navbar badge and the profile page's "N saved properties" line.
+ * Toggling a favorite from a property card no longer goes through this hook:
+ * listPublicProperties() now attaches `isFavorited` to each property for a
+ * signed-in customer, so PropertyCard (and the homepage's featured card)
+ * read/flip that field directly and call addFavorite()/removeFavorite() from
+ * lib/api/customer-portal.ts themselves, rather than sharing global toggle
+ * state here.
+ */
 export function useFavorites() {
   const { user } = useAuth();
-  const { open: openAuthDrawer } = useAuthDrawer();
   const [favorites, setFavorites] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -38,33 +42,5 @@ export function useFavorites() {
     };
   }, [user]);
 
-  const isFavorite = useCallback(
-    (id: string) => favorites.includes(id),
-    [favorites],
-  );
-
-  const toggle = useCallback(
-    async (id: string) => {
-      if (!user) {
-        openAuthDrawer("signin");
-        return;
-      }
-      const wasFavorite = favorites.includes(id);
-      // Optimistic update, rolled back if the request fails.
-      setFavorites((prev) =>
-        wasFavorite ? prev.filter((f) => f !== id) : [...prev, id],
-      );
-      try {
-        if (wasFavorite) await removeFavorite(id);
-        else await addFavorite(id);
-      } catch {
-        setFavorites((prev) =>
-          wasFavorite ? [...prev, id] : prev.filter((f) => f !== id),
-        );
-      }
-    },
-    [user, favorites, openAuthDrawer],
-  );
-
-  return { favorites, toggle, isFavorite, isLoading };
+  return { favorites, isLoading };
 }

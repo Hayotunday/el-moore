@@ -5,6 +5,7 @@ import {
   toPublicR2Url,
   R2_PUBLIC_BASE_URL,
 } from "./client";
+import { customerApiFetch } from "./customer-auth";
 import type { Property, PropertyImage, PropertyStatus, Sale } from "./types";
 
 export interface PropertyWithSale extends Property {
@@ -50,8 +51,22 @@ export async function getPropertiesDashboard(params: {
   );
 }
 
+/**
+ * Public and works with no session — but routed through customerApiFetch
+ * (not the plain apiFetch) so a signed-in customer's bearer token is
+ * attached when present. The backend uses that to add `isFavorited` to
+ * each property; an anonymous call gets the same list with that field
+ * simply absent. Per the backend team: this is documented as `GET
+ * /api/properties (authenticated)`, but that path is staff-role-gated
+ * (confirmed: 401s with no token, and separately gated to OFFICE_ADMIN/
+ * TEAM_LEAD/ACCOUNTANT) — /properties/public is the one this app can
+ * actually reach as a customer, and it matches the described behavior
+ * (isFavorited present iff authenticated). Worth re-confirming with them
+ * which path is actually meant; update here if it turns out to be
+ * /properties instead.
+ */
 export async function listPublicProperties(): Promise<Property[]> {
-  return apiFetch<Property[]>("/properties/public");
+  return customerApiFetch<Property[]>("/properties/public");
 }
 
 /** Best-effort primary photo for a property card — falls back to null so a

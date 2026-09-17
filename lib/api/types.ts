@@ -50,6 +50,10 @@ export interface Property {
   location: string;
   price: string;
   status: PropertyStatus;
+  /** Only present when /properties/public is called with a customer's bearer
+   *  token attached — omitted entirely for anonymous requests (no user to
+   *  check favorites against). */
+  isFavorited?: boolean;
   /** Links this property to a construction Project (see lib/api/projects.ts) — not
    *  every property belongs to one, e.g. standalone land/resale units. */
   projectId?: string | null;
