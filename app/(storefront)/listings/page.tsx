@@ -4,7 +4,11 @@ import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import PropertyCard from "@/components/property-cards";
 import ScrollReveal from "@/components/scroll-reveal";
-import { listPublicProperties, getPrimaryImages } from "@/lib/api/properties";
+import {
+  listPublicProperties,
+  listProperties,
+  getPrimaryImages,
+} from "@/lib/api/properties";
 import type { Property, PropertyStatus } from "@/lib/api/types";
 
 const statusFilters: { label: string; value: PropertyStatus | "ALL" }[] = [
@@ -27,7 +31,9 @@ function ListingsContent() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [images, setImages] = useState<Map<string, string | null>>(new Map());
   const [loading, setLoading] = useState(true);
-  const [locationQuery, setLocationQuery] = useState(searchParams.get("location") ?? "");
+  const [locationQuery, setLocationQuery] = useState(
+    searchParams.get("location") ?? "",
+  );
   const [status, setStatus] = useState<PropertyStatus | "ALL">(
     (searchParams.get("status") as PropertyStatus | null) ?? "AVAILABLE",
   );
@@ -37,8 +43,9 @@ function ListingsContent() {
 
   useEffect(() => {
     let cancelled = false;
-    listPublicProperties().then(async (p) => {
+    listProperties().then(async (p) => {
       if (cancelled) return;
+      console.log(p);
       setProperties(p);
       setLoading(false);
       const imgs = await getPrimaryImages(p.map((prop) => prop.id));
@@ -75,8 +82,8 @@ function ListingsContent() {
           Explore Investment Opportunities
         </h1>
         <p className="text-muted-foreground max-w-xl mb-10">
-          Curated real estate and land assets, verified and titled, across
-          West Africa&apos;s most resilient markets.
+          Curated real estate and land assets, verified and titled, across West
+          Africa&apos;s most resilient markets.
         </p>
       </ScrollReveal>
 
@@ -169,14 +176,20 @@ function ListingsContent() {
           {loading ? (
             <div className="grid sm:grid-cols-2 gap-6">
               {[0, 1, 2, 3].map((i) => (
-                <div key={i} className="aspect-4/3 rounded-md bg-muted animate-pulse" />
+                <div
+                  key={i}
+                  className="aspect-4/3 rounded-md bg-muted animate-pulse"
+                />
               ))}
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 gap-6">
               {filtered.map((property, i) => (
                 <ScrollReveal key={property.id} delay={i * 0.06}>
-                  <PropertyCard property={property} imageUrl={images.get(property.id)} />
+                  <PropertyCard
+                    property={property}
+                    imageUrl={images.get(property.id)}
+                  />
                 </ScrollReveal>
               ))}
             </div>

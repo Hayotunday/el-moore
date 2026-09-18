@@ -27,12 +27,8 @@ export default function SavedProperties() {
     let cancelled = false;
     setLoading(true);
     listMyFavorites()
-      .then(async (rawList) => {
+      .then(async (list) => {
         if (cancelled) return;
-        // Every item here is a favorite by definition — set explicitly in
-        // case this endpoint doesn't itself echo isFavorited back, so
-        // PropertyCard's heart always renders filled on this page.
-        const list = rawList.map((p) => ({ ...p, isFavorited: true }));
         setProperties(list);
         setLoading(false);
         const imgs = await getPrimaryImages(list.map((p) => p.id));
@@ -52,10 +48,12 @@ export default function SavedProperties() {
         <ScrollReveal>
           <div className="rounded-md bg-card p-12 text-center shadow-ambient max-w-md">
             <Heart className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
-            <h1 className="text-xl font-bold mb-2">Sign in to see your saved properties</h1>
+            <h1 className="text-xl font-bold mb-2">
+              Sign in to see your saved properties
+            </h1>
             <p className="text-sm text-muted-foreground mb-6">
-              Create an account or sign in to save properties and pick up where you left
-              off on any device.
+              Create an account or sign in to save properties and pick up where
+              you left off on any device.
             </p>
             <Button onClick={() => openAuthDrawer("signin")}>Sign In</Button>
           </div>
@@ -68,17 +66,22 @@ export default function SavedProperties() {
     <div className="container py-12">
       <ScrollReveal>
         <p className="eyebrow mb-3">Your Watchlist</p>
-        <h1 className="font-serif text-3xl md:text-4xl font-medium mb-2">Saved Properties</h1>
+        <h1 className="font-serif text-3xl md:text-4xl font-medium mb-2">
+          Saved Properties
+        </h1>
         <p className="text-muted-foreground max-w-xl mb-10">
-          Properties you&apos;ve saved while browsing the showroom, synced to your
-          account.
+          Properties you&apos;ve saved while browsing the showroom, synced to
+          your account.
         </p>
       </ScrollReveal>
 
       {loading ? (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="aspect-4/3 rounded-md bg-muted animate-pulse" />
+            <div
+              key={i}
+              className="aspect-4/3 rounded-md bg-muted animate-pulse"
+            />
           ))}
         </div>
       ) : properties.length > 0 ? (

@@ -33,15 +33,6 @@ export default function ScrollReveal({
   }
 
   return (
-    // The "left"/"right" initial state translates x by ±16px before it's
-    // revealed — every not-yet-scrolled-into-view instance on the page sits
-    // at that offset simultaneously, which was enough to widen the page's
-    // scrollable area and produce a second (horizontal) scrollbar. Rather
-    // than rely on some ancestor clipping it correctly (overflow-x:clip on
-    // body wasn't enough on its own), this wrapper clips the transform
-    // locally so ScrollReveal can never leak overflow regardless of where
-    // it's used. className moves here (not the animated child) so existing
-    // layout classes like grid column spans still apply to the right box.
     <div className={`overflow-x-hidden no-scrollbar ${className}`}>
       <motion.div
         initial={{

@@ -7,7 +7,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { useAuthDrawer } from "@/contexts/auth-drawer-context";
 import { addFavorite, removeFavorite } from "@/lib/api/customer-portal";
 import { formatCurrency } from "@/lib/utils";
-import type { Property } from "@/lib/api/types";
+import { type Property } from "@/lib/api/types";
 
 export default function PropertyCard({
   property,
@@ -18,10 +18,6 @@ export default function PropertyCard({
 }) {
   const { user } = useAuth();
   const { open: openAuthDrawer } = useAuthDrawer();
-  // Seeded from the property itself (listPublicProperties() attaches
-  // isFavorited per-item for a signed-in customer) rather than a separate
-  // favorites lookup — kept in local state so the heart can flip instantly
-  // on tap without waiting on the parent to refetch its list.
   const [fav, setFav] = useState(property.isFavorited ?? false);
 
   useEffect(() => {
@@ -41,7 +37,9 @@ export default function PropertyCard({
       else await removeFavorite(property.id);
     } catch (err) {
       setFav(!next);
-      toast.error(err instanceof Error ? err.message : "Could not update favorites.");
+      toast.error(
+        err instanceof Error ? err.message : "Could not update favorites.",
+      );
     }
   };
 

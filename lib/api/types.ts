@@ -50,12 +50,7 @@ export interface Property {
   location: string;
   price: string;
   status: PropertyStatus;
-  /** Only present when /properties/public is called with a customer's bearer
-   *  token attached — omitted entirely for anonymous requests (no user to
-   *  check favorites against). */
   isFavorited?: boolean;
-  /** Links this property to a construction Project (see lib/api/projects.ts) — not
-   *  every property belongs to one, e.g. standalone land/resale units. */
   projectId?: string | null;
   createdAt?: string;
 }
@@ -243,7 +238,11 @@ export interface Customer extends Omit<PersonName, "lastName"> {
   createdAt?: string;
 }
 
-export type InspectionStatus = "SCHEDULED" | "COMPLETED" | "NO_SHOW" | "CANCELLED";
+export type InspectionStatus =
+  | "SCHEDULED"
+  | "COMPLETED"
+  | "NO_SHOW"
+  | "CANCELLED";
 
 export interface SiteInspection {
   id: string;
@@ -279,7 +278,11 @@ export interface Invite extends PersonName {
 
 /* ---------- Projects (construction progress tracking) ---------- */
 
-export type ProjectStatus = "PLANNING" | "IN_PROGRESS" | "COMPLETED" | "ON_HOLD";
+export type ProjectStatus =
+  | "PLANNING"
+  | "IN_PROGRESS"
+  | "COMPLETED"
+  | "ON_HOLD";
 
 export interface Project {
   id: string;
@@ -300,7 +303,11 @@ export interface ProjectBudgetSummary {
   remaining: string;
 }
 
-export type WorkItemStatus = "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED" | "DELAYED";
+export type WorkItemStatus =
+  | "NOT_STARTED"
+  | "IN_PROGRESS"
+  | "COMPLETED"
+  | "DELAYED";
 
 export interface WorkItem {
   id: string;

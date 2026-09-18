@@ -9,10 +9,36 @@ import type { InstallmentPlan, Property, Sale, SaleDocument } from "./types";
  * against once customer auth (lib/api/customer-auth.ts) is wired into the UI.
  */
 
-/** Response shape (bare Property objects vs. {propertyId, ...}[]) isn't documented —
- *  assuming the joined Property list, since that's the more directly useful shape. */
+export interface FavoriteItem {
+  id: string;
+  property: Property;
+  addedAt?: string;
+}
+
+/**
+ * Returns all favorited properties for the authenticated customer.
+ * Normalizes the backend response ({ id, property: {...}, addedAt }[]) into standard Property objects.
+ */
 export async function listMyFavorites(): Promise<Property[]> {
-  return customerApiFetch<Property[]>("/customers/me/favorites");
+  const res = await customerApiFetch<Array<Property | FavoriteItem>>(
+    "/customers/me/favorites",
+  );
+  if (!Array.isArray(res)) return [];
+  return res.map((item) => {
+    if ("property" in item && item.property) {
+      return {
+        ...item.property,
+        price: String(item.property.price ?? ""),
+        isFavorited: true,
+      };
+    }
+    const prop = item as Property;
+    return {
+      ...prop,
+      price: String(prop.price ?? ""),
+      isFavorited: true,
+    };
+  });
 }
 
 export async function addFavorite(propertyId: string): Promise<void> {

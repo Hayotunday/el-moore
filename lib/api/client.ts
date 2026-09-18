@@ -3,21 +3,6 @@ const DEFAULT_API_BASE_URL = "https://el-moore.onrender.com";
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL || DEFAULT_API_BASE_URL;
 
-/**
- * A presigned R2 *upload* URL (what `uploadUrl` always is) points at Cloudflare's
- * S3-compatible API endpoint — `<bucket>.<accountId>.r2.cloudflarestorage.com` —
- * which only accepts signed S3 requests. It is never a valid public GET URL: the
- * real public delivery domain is a completely different host (an r2.dev subdomain
- * or a custom domain bound to the bucket). Naively stripping the query string off
- * an upload URL and calling that the "public" URL — an easy mistake, since it
- * *looks* like a plain link once the signature is gone — silently produces a link
- * that 400s in the browser instead of showing the image.
- *
- * These two are the actual public bases for this project's two R2 buckets, set
- * via env so they can be corrected without a code change if Cloudflare's assigned
- * domains differ from what's configured here — verify them against the R2
- * dashboard for this account if uploaded images/documents ever come back 400.
- */
 export const R2_PUBLIC_BASE_URL =
   process.env.NEXT_PUBLIC_R2_PUBLIC_BASE_URL ||
   "https://pub-7a398cb5a1604da7a1ff82accf47a10f.r2.dev";
@@ -25,12 +10,6 @@ export const R2_PRIVATE_BASE_URL =
   process.env.NEXT_PUBLIC_R2_PRIVATE_BASE_URL ||
   "https://pub-c96abe9a0fca4f158e5ff5a0d5b1f59b.r2.dev";
 
-/**
- * Turns a presigned R2 *upload* URL into the real public URL an `<img>`/link can
- * actually load, by keeping only its path (the storage key) and re-anchoring that
- * to the bucket's real public base — never the S3 API host the upload URL itself
- * points at. Pass this result to a `.../confirm` endpoint's `imageUrl`/`fileUrl`.
- */
 export function toPublicR2Url(
   presignedUploadUrl: string,
   publicBaseUrl: string,
@@ -41,7 +20,7 @@ export function toPublicR2Url(
   return `${publicBaseUrl}${path.startsWith("/") ? "" : "/"}${path}`;
 }
 
-const TOKEN_KEY = "el-moore-token";
+const TOKEN_KEY = "el-moore-customer-token";
 
 export function getStoredToken(): string | null {
   if (typeof window === "undefined") return null;
@@ -54,18 +33,15 @@ export function setStoredToken(token: string | null) {
   else window.localStorage.removeItem(TOKEN_KEY);
 }
 
-/** Dispatched when the refresh-token cookie itself is invalid/expired, so
- *  AuthProvider can clear its in-memory user immediately instead of leaving the UI
- *  looking "logged in" while every request 401s. */
-const AUTH_EXPIRED_EVENT = "el-moore-auth-expired";
+const AUTH_EXPIRED_EVENT = "el-moore-customer-auth-expired";
 
 export function onAuthExpired(handler: () => void): () => void {
-  if (typeof window === "undefined") return () => {};
+  if (typeof window === "undefined") return () => { };
   window.addEventListener(AUTH_EXPIRED_EVENT, handler);
   return () => window.removeEventListener(AUTH_EXPIRED_EVENT, handler);
 }
 
-function announceAuthExpired() {
+export function announceAuthExpired() {
   if (typeof window === "undefined") return;
   window.dispatchEvent(new CustomEvent(AUTH_EXPIRED_EVENT));
 }
@@ -92,64 +68,73 @@ function extractMessage(body: unknown, fallback: string): string {
 
 interface SuccessEnvelope<T> {
   data: T;
-  message: string;
-  statusCode: number;
-  success: true;
+  message?: string;
+  statusCode?: number;
+  success?: boolean;
 }
 
-/** Most (not all — e.g. /health) success responses are wrapped in `{ data, message, statusCode, success }`. */
-function unwrap<T>(body: unknown): T {
+/** Unwraps responses wrapped in standard API response envelopes ({ data, success, ... }). */
+export function unwrap<T>(body: unknown): T {
   if (
     body &&
     typeof body === "object" &&
     "data" in body &&
-    "success" in body &&
-    (body as { success?: unknown }).success === true
+    ((body as { success?: unknown }).success === true ||
+      "statusCode" in body ||
+      "message" in body)
   ) {
     return (body as SuccessEnvelope<T>).data;
   }
   return body as T;
 }
 
-interface RawTokenResponse {
+export interface RawTokenResponse {
   accessToken?: string;
   access_token?: string;
   token?: string;
+  [key: string]: unknown;
 }
 
-function extractToken(raw: RawTokenResponse): string | null {
-  return raw.accessToken ?? raw.access_token ?? raw.token ?? null;
+export function extractToken(raw: unknown): string | null {
+  if (!raw || typeof raw !== "object") return null;
+  const unwrapped = unwrap<RawTokenResponse>(raw);
+  if (!unwrapped || typeof unwrapped !== "object") return null;
+  return (
+    unwrapped.accessToken ?? unwrapped.access_token ?? unwrapped.token ?? null
+  );
 }
 
 /**
- * Calls POST /auth/refresh directly (not through apiFetch, to avoid recursing back
- * into the 401-retry below) using the HttpOnly refresh-token cookie. Returns the new
- * access token, or null if the refresh token itself is invalid/expired.
+ * Calls POST /customers/me/auth/refresh directly using the current access token
+ * and the HttpOnly refresh-token cookie set on login. Returns the new access token,
+ * or null if the refresh token itself is invalid/expired.
  */
-async function rawRefresh(): Promise<string | null> {
+async function rawCustomerRefresh(): Promise<string | null> {
+  const current = getStoredToken();
+  if (!current) return null;
   try {
-    const res = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+    const res = await fetch(`${API_BASE_URL}/api/customers/me/auth/refresh`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ accessToken: current }),
     });
     if (!res.ok) return null;
     const text = await res.text();
     if (!text) return null;
-    return extractToken(unwrap<RawTokenResponse>(JSON.parse(text)));
+    return extractToken(JSON.parse(text));
   } catch {
     return null;
   }
 }
 
 // Access-token refreshes are deduped so a burst of requests that all hit a 401
-// at once (e.g. right after the token expires) triggers exactly one
-// /auth/refresh call, not one per request.
+// at once triggers exactly one /customers/me/auth/refresh call, not one per request.
 let refreshInFlight: Promise<string | null> | null = null;
 
-function refreshOnce(): Promise<string | null> {
+export function refreshCustomerOnce(): Promise<string | null> {
   if (!refreshInFlight) {
-    refreshInFlight = rawRefresh()
+    refreshInFlight = rawCustomerRefresh()
       .then((newToken) => {
         setStoredToken(newToken);
         if (!newToken) announceAuthExpired();
@@ -162,17 +147,6 @@ function refreshOnce(): Promise<string | null> {
   return refreshInFlight;
 }
 
-/**
- * Fetch wrapper for the live el-moore-api (NestJS) backend at API_BASE_URL.
- * `credentials: "include"` is required so the HttpOnly refresh-token cookie the
- * backend sets on login/refresh is sent back on subsequent requests.
- *
- * The backend's access tokens are short-lived (they expire after a few minutes of
- * inactivity, which is why a stale tab used to start throwing 401s until you
- * manually logged back in). On a 401 from a request that actually sent a token,
- * this silently refreshes via the cookie and retries the request once before
- * giving up.
- */
 export async function apiFetch<T>(
   path: string,
   options: RequestInit = {},
@@ -192,8 +166,13 @@ export async function apiFetch<T>(
 
   let res = await send(token);
 
-  if (res.status === 401 && token && path !== "/auth/refresh") {
-    const refreshed = await refreshOnce();
+  if (
+    res.status === 401 &&
+    token &&
+    path !== "/customers/me/auth/refresh" &&
+    path !== "/customers/me/auth/login"
+  ) {
+    const refreshed = await refreshCustomerOnce();
     if (refreshed) {
       token = refreshed;
       res = await send(token);
@@ -211,15 +190,12 @@ export async function apiFetch<T>(
   return unwrap<T>(JSON.parse(text));
 }
 
-/** Raw PUT of a File to a presigned upload URL (R2). Not routed through apiFetch — no auth header, no /api prefix. */
+export const customerApiFetch = apiFetch;
+
 export async function uploadToPresignedUrl(
   url: string,
   file: File,
 ): Promise<void> {
-  // The backend is expected to return an absolute URL (a presigned R2/S3 link). If it
-  // ever returns a relative path instead, resolving it against the current page would
-  // silently hit this frontend's own origin instead of the API — so anchor it to
-  // API_BASE_URL explicitly rather than trusting the browser's relative resolution.
   const absoluteUrl = /^https?:\/\//i.test(url)
     ? url
     : `${API_BASE_URL}${url.startsWith("/") ? "" : "/"}${url}`;

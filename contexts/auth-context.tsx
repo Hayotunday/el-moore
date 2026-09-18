@@ -34,17 +34,33 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 function isValidCachedUser(value: unknown): value is User {
   if (!value || typeof value !== "object") return false;
   const u = value as Record<string, unknown>;
-  return typeof u.id === "string" && typeof u.firstName === "string" && typeof u.phone === "string";
+  return typeof u.id === "string" && (typeof u.firstName === "string" || typeof u.email === "string");
+}
+
+function isTokenExpired(token: string): boolean {
+  try {
+    const parts = token.split(".");
+    if (parts.length < 2) return false;
+    let base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    while (base64.length % 4 !== 0) {
+      base64 += "=";
+    }
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join(""),
+    );
+    const payload = JSON.parse(jsonPayload);
+    if (!payload.exp) return false;
+    return payload.exp * 1000 <= Date.now() + 10000;
+  } catch {
+    return false;
+  }
 }
 
 const USER_STORAGE_KEY = "el-moore-customer-user";
 
-/**
- * Backed by the purpose-built customer identity system (lib/api/customer-auth.ts) —
- * a Customer record, not the generic "basic" ManagementUser role this used to sign
- * in via lib/api/auth.ts. See lib/api/customer-auth.ts's module comment for why
- * that's a separate token/session from the old system.
- */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -52,13 +68,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const token = customerAuth.getCustomerToken();
     const cachedUser = window.localStorage.getItem(USER_STORAGE_KEY);
+
     if (token && cachedUser) {
       try {
         const parsed = JSON.parse(cachedUser);
         if (isValidCachedUser(parsed)) {
           setUser(parsed);
+
+          // If the token is expired, trigger a silent refresh in background without clearing state eagerly
+          if (isTokenExpired(token)) {
+            customerAuth.refreshCustomerOnce().catch(() => {
+              // Handled by onCustomerAuthExpired if refresh token is also invalid
+            });
+          }
         } else {
-          throw new Error("Cached user is missing required fields.");
+          customerAuth.setCustomerToken(null);
+          window.localStorage.removeItem(USER_STORAGE_KEY);
         }
       } catch {
         customerAuth.setCustomerToken(null);
