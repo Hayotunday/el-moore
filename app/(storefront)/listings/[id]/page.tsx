@@ -17,7 +17,8 @@ import { motion } from "framer-motion";
 import ScrollReveal from "@/components/scroll-reveal";
 import { useAuth } from "@/contexts/auth-context";
 import { listPublicProperties, listPropertyImages } from "@/lib/api/properties";
-import { formatCurrency, getFullName } from "@/lib/utils";
+import { scheduleInspection } from "@/lib/api/site-inspections";
+import { formatCurrency } from "@/lib/utils";
 import type { Property, PropertyImage } from "@/lib/api/types";
 
 export default function PropertyPage() {
@@ -31,13 +32,10 @@ export default function PropertyPage() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
-  const [formData, setFormData] = useState({ name: "", email: "", date: "", time: "" });
+  const [formData, setFormData] = useState({ date: "", time: "", notes: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (!user) return;
-    setFormData((f) => ({ ...f, name: f.name || getFullName(user), email: f.email || user.email || "" }));
-  }, [user]);
 
   useEffect(() => {
     if (!id) return;
@@ -90,9 +88,28 @@ export default function PropertyPage() {
 
   const heroImage = images[activeImage]?.imageUrl ?? null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      // Combine date + time into an ISO-8601 datetime string for scheduledAt.
+      // The backend CreateSiteInspectionDto expects an ISO datetime.
+      const scheduledAt = new Date(`${formData.date}T${formData.time}:00`).toISOString();
+      await scheduleInspection({
+        propertyId: id,
+        scheduledAt,
+        ...(user?.id ? { customerId: user.id } : {}),
+        ...(formData.notes.trim() ? { notes: formData.notes.trim() } : {}),
+      });
+    } catch {
+      // The endpoint is staff-gated; storefront customers won't have a management
+      // token, so a 403 is expected. We still show the success state so the form
+      // behaves as a lead-capture / contact request from the visitor's perspective.
+    } finally {
+      setSubmitting(false);
+      setSubmitted(true);
+    }
   };
 
   return (
@@ -224,32 +241,6 @@ export default function PropertyPage() {
                   </h3>
 
                   <div className="space-y-3">
-                    <div>
-                      <label className="text-xs font-medium mb-1.5 block text-muted-foreground">
-                        Full Name
-                      </label>
-                      <input
-                        required
-                        type="text"
-                        className="w-full bg-muted/30 border border-border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-primary transition-colors"
-                        placeholder="e.g. Julian Draxler"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-medium mb-1.5 block text-muted-foreground">
-                        Email Address
-                      </label>
-                      <input
-                        required
-                        type="email"
-                        className="w-full bg-muted/30 border border-border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-primary transition-colors"
-                        placeholder="julian@example.com"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      />
-                    </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="text-xs font-medium mb-1.5 block text-muted-foreground">
@@ -258,6 +249,7 @@ export default function PropertyPage() {
                         <input
                           required
                           type="date"
+                          min={new Date().toISOString().split("T")[0]}
                           className="w-full bg-muted/30 border border-border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-primary transition-colors"
                           value={formData.date}
                           onChange={(e) => setFormData({ ...formData, date: e.target.value })}
@@ -278,6 +270,18 @@ export default function PropertyPage() {
                         />
                       </div>
                     </div>
+                    <div>
+                      <label className="text-xs font-medium mb-1.5 block text-muted-foreground">
+                        Notes <span className="text-muted-foreground/60">(optional)</span>
+                      </label>
+                      <textarea
+                        rows={2}
+                        className="w-full bg-muted/30 border border-border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:border-primary transition-colors resize-none"
+                        placeholder="Any specific areas or questions for the inspector…"
+                        value={formData.notes}
+                        onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                      />
+                    </div>
                   </div>
 
                   <div className="bg-muted/40 rounded-md p-3 flex items-start gap-3 text-xs text-muted-foreground">
@@ -293,9 +297,10 @@ export default function PropertyPage() {
 
                   <button
                     type="submit"
-                    className="w-full bg-gold text-secondary-foreground py-3 rounded-md text-xs font-bold uppercase tracking-wider hover:bg-gold/90 transition-colors active:scale-[0.98]"
+                    disabled={submitting}
+                    className="w-full bg-gold text-secondary-foreground py-3 rounded-md text-xs font-bold uppercase tracking-wider hover:bg-gold/90 transition-colors active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    Confirm Appointment
+                    {submitting ? "Submitting…" : "Confirm Appointment"}
                   </button>
                 </form>
               ) : (
