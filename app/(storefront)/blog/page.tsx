@@ -20,7 +20,6 @@ import { formatDate } from "@/lib/utils";
 import {
   getMarkdownExcerpt,
   estimateReadingTime,
-  SAMPLE_BLOG_POSTS,
 } from "@/lib/markdown-utils";
 import type { BlogPost } from "@/lib/api/types";
 
@@ -34,18 +33,24 @@ export default function Blog() {
   const [selectedCategory, setSelectedCategory] = useState("All");
 
   useEffect(() => {
+    let cancelled = false;
     listPublishedPosts()
       .then((data) => {
-        if (data && data.length > 0) {
-          setPosts(data);
-        } else {
-          setPosts(SAMPLE_BLOG_POSTS);
+        if (!cancelled) {
+          setPosts(Array.isArray(data) ? data : []);
         }
       })
-      .catch(() => {
-        setPosts(SAMPLE_BLOG_POSTS);
+      .catch((err) => {
+        console.error("Error fetching published blog posts:", err);
+        if (!cancelled) setPosts([]);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleSubscribe = async () => {
@@ -210,7 +215,9 @@ export default function Blog() {
       ) : (
         <section className="container py-12">
           <div className="rounded-md border border-dashed border-border p-16 text-center text-muted-foreground">
-            No editorial insights matched your filter. Try adjusting your search query.
+            {searchQuery || selectedCategory !== "All"
+              ? "No editorial insights matched your filter. Try adjusting your search query."
+              : "More insights are coming soon from the El-Moore editorial desk."}
           </div>
         </section>
       )}
@@ -291,10 +298,7 @@ export default function Blog() {
           </ScrollReveal>
           <div className="grid md:grid-cols-2 gap-6">
             <ScrollReveal>
-              <Link
-                href="/blog/understanding-certificate-of-occupancy-land-titles-nigeria"
-                className="group flex gap-6 border border-white/10 bg-white/5 hover:bg-white/10 transition-colors text-white rounded-md p-6 h-full"
-              >
+              <div className="flex gap-6 border border-white/10 bg-white/5 text-white rounded-md p-6 h-full">
                 <div className="w-24 h-32 rounded bg-white/10 shrink-0 flex items-center justify-center">
                   <BookOpen className="h-8 w-8 text-gold" />
                 </div>
@@ -302,49 +306,43 @@ export default function Blog() {
                   <span className="text-[10px] uppercase tracking-widest text-gold font-bold">
                     Getting Started
                   </span>
-                  <h3 className="font-bold text-white group-hover:text-gold transition-colors">
+                  <h3 className="font-bold text-white">
                     Understanding &quot;Certificate of Occupancy&quot;
                   </h3>
                   <p className="text-sm text-white/70">
                     The vital document every Nigerian land investor must master before committing capital.
                   </p>
                 </div>
-              </Link>
+              </div>
             </ScrollReveal>
 
             <div className="space-y-4">
               <ScrollReveal delay={0.1}>
-                <Link
-                  href="/blog/governors-consent-explained-avoiding-costly-conveyancing-pitfalls"
-                  className="group border border-white/10 bg-white/5 hover:bg-white/10 transition-colors text-white rounded-md p-5 flex items-start gap-3.5 block"
-                >
+                <div className="border border-white/10 bg-white/5 text-white rounded-md p-5 flex items-start gap-3.5">
                   <Scale className="h-5 w-5 text-gold mt-0.5 shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-sm text-white group-hover:text-gold transition-colors">
+                    <h4 className="font-semibold text-sm text-white">
                       Governor&apos;s Consent, Explained
                     </h4>
                     <p className="text-xs text-white/70 mt-1">
                       Why title perfection matters before you sign a deed of assignment.
                     </p>
                   </div>
-                </Link>
+                </div>
               </ScrollReveal>
 
               <ScrollReveal delay={0.2}>
-                <Link
-                  href="/blog/understanding-certificate-of-occupancy-land-titles-nigeria"
-                  className="group border border-white/10 bg-white/5 hover:bg-white/10 transition-colors text-white rounded-md p-5 flex items-start gap-3.5 block"
-                >
+                <div className="border border-white/10 bg-white/5 text-white rounded-md p-5 flex items-start gap-3.5">
                   <Shield className="h-5 w-5 text-gold mt-0.5 shrink-0" />
                   <div>
-                    <h4 className="font-semibold text-sm text-white group-hover:text-gold transition-colors">
+                    <h4 className="font-semibold text-sm text-white">
                       Due Diligence Before You Buy
                     </h4>
                     <p className="text-xs text-white/70 mt-1">
                       The multi-tiered verification steps El-Moore runs on every listing.
                     </p>
                   </div>
-                </Link>
+                </div>
               </ScrollReveal>
             </div>
           </div>

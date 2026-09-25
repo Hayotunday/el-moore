@@ -1,12 +1,21 @@
 import type { BlogPost } from "./api/types";
 
 /**
- * Strips Markdown syntax and HTML tags to yield clean plain text.
+ * Strips Markdown syntax and HTML tags to yield clean plain text for card previews.
  */
 export function stripMarkdown(markdown: string): string {
   if (!markdown) return "";
   return (
     markdown
+      // Strip HTML tags first
+      .replace(/<[^>]*>/g, " ")
+      // Decode common HTML entities
+      .replace(/&nbsp;/gi, " ")
+      .replace(/&amp;/gi, "&")
+      .replace(/&lt;/gi, "<")
+      .replace(/&gt;/gi, ">")
+      .replace(/&quot;/gi, '"')
+      .replace(/&#39;/gi, "'")
       // Remove code blocks
       .replace(/```[\s\S]*?```/g, "")
       // Remove inline code
@@ -26,8 +35,6 @@ export function stripMarkdown(markdown: string): string {
       .replace(/^\s*\d+\.\s+/gm, "")
       // Remove horizontal rules
       .replace(/^[-*_]{3,}\s*$/gm, "")
-      // Remove HTML tags
-      .replace(/<[^>]*>/g, "")
       // Replace multiple newlines/spaces with single space
       .replace(/\s+/g, " ")
       .trim()
@@ -35,7 +42,7 @@ export function stripMarkdown(markdown: string): string {
 }
 
 /**
- * Creates a clean plain-text excerpt of specified length from Markdown content.
+ * Creates a clean plain-text excerpt of specified length from Markdown or HTML content.
  */
 export function getMarkdownExcerpt(markdown: string, maxLength: number = 160): string {
   const plainText = stripMarkdown(markdown);
@@ -58,7 +65,7 @@ export function estimateReadingTime(markdown: string): number {
 }
 
 /**
- * High-quality fallback blog posts written in markdown for El-Moore Real Estate.
+ * High-quality sample blog posts for testing or fallback.
  */
 export const SAMPLE_BLOG_POSTS: BlogPost[] = [
   {

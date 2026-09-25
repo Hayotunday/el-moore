@@ -7,7 +7,6 @@ import {
   ArrowLeft,
   Calendar,
   Clock,
-  Share2,
   Check,
   Copy,
   BookOpen,
@@ -20,7 +19,7 @@ import ScrollReveal from "@/components/scroll-reveal";
 import MarkdownRenderer from "@/components/markdown-renderer";
 import { getPostBySlug, listPublishedPosts } from "@/lib/api/blog";
 import { formatDate } from "@/lib/utils";
-import { estimateReadingTime, getMarkdownExcerpt, SAMPLE_BLOG_POSTS } from "@/lib/markdown-utils";
+import { estimateReadingTime, getMarkdownExcerpt } from "@/lib/markdown-utils";
 import type { BlogPost } from "@/lib/api/types";
 
 export default function BlogDetailsPage() {
@@ -37,56 +36,46 @@ export default function BlogDetailsPage() {
     if (!slugParam) return;
     let cancelled = false;
 
-    // Load main post & all published posts for related section
     async function loadData() {
       setLoading(true);
       setNotFound(false);
 
       let fetchedPost: BlogPost | null = null;
-      let fetchedList: BlogPost[] = [];
 
+      // 1. Fetch single post directly from GET /api/blog/posts/:slug
       try {
-        // Try fetching single post by slug from API
         fetchedPost = await getPostBySlug(slugParam);
       } catch {
-        // If single fetch fails, fall back to list search
+        // Post not found directly by slug
       }
 
+      // 2. Fetch all published posts from GET /api/blog/posts for related section / fallback search
+      let publishedList: BlogPost[] = [];
       try {
-        fetchedList = await listPublishedPosts();
+        publishedList = await listPublishedPosts();
       } catch {
-        // Fallback list
+        // Ignore error
       }
 
       if (cancelled) return;
 
-      // Ensure fallback sample posts are available if API has no results
-      const combinedList = fetchedList.length > 0 ? fetchedList : SAMPLE_BLOG_POSTS;
-      setAllPosts(combinedList);
+      setAllPosts(Array.isArray(publishedList) ? publishedList : []);
 
-      if (!fetchedPost) {
-        // Try finding in list by slug or ID
-        const match = combinedList.find(
-          (p) => p.slug === slugParam || p.id === slugParam || p.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") === slugParam
-        );
-        if (match) {
-          fetchedPost = match;
-        } else {
-          // Check sample posts explicitly
-          const sampleMatch = SAMPLE_BLOG_POSTS.find(
-            (p) => p.slug === slugParam || p.id === slugParam
-          );
-          if (sampleMatch) {
-            fetchedPost = sampleMatch;
-          }
-        }
-      }
-
+      // If single endpoint returned a post, use it
       if (fetchedPost) {
         setPost(fetchedPost);
+        setLoading(false);
+        return;
+      }
+
+      // Fallback: search in publishedList by slug or id
+      const match = publishedList.find((p) => p.slug === slugParam || p.id === slugParam);
+      if (match) {
+        setPost(match);
       } else {
         setNotFound(true);
       }
+
       setLoading(false);
     }
 

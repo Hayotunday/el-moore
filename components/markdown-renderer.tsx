@@ -1,10 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { ExternalLink, Copy, Check } from "lucide-react";
-import { useState } from "react";
 
 interface MarkdownRendererProps {
   content: string;
@@ -49,7 +48,30 @@ function CodeBlock({ children, language }: { children: string; language?: string
   );
 }
 
+/**
+ * Checks whether content contains HTML tags (e.g. from Tiptap or Rich Text Editors).
+ */
+function isHtmlContent(str: string): boolean {
+  if (!str) return false;
+  // Match common block or inline HTML tags output by rich text editors
+  const htmlPattern = /<\/?(p|h[1-6]|ul|ol|li|blockquote|div|span|strong|em|b|i|a|img|table|tr|td|th|br|pre|code)\b[^>]*>/i;
+  return htmlPattern.test(str.trim());
+}
+
 export default function MarkdownRenderer({ content, className = "" }: MarkdownRendererProps) {
+  if (!content) return null;
+
+  // If content is HTML (e.g. output from Tiptap or Rich Text Editor), render as HTML
+  if (isHtmlContent(content)) {
+    return (
+      <div
+        className={`prose-custom text-foreground/90 leading-relaxed font-sans ${className}`}
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    );
+  }
+
+  // Otherwise render as pure Markdown
   return (
     <div className={`prose-custom text-foreground/90 leading-relaxed font-sans ${className}`}>
       <ReactMarkdown
