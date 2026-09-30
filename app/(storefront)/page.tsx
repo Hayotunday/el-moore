@@ -27,8 +27,8 @@ import { useAuthDrawer } from "@/contexts/auth-drawer-context";
 import { listPublicProperties, getPrimaryImages } from "@/lib/api/properties";
 import { addFavorite, removeFavorite } from "@/lib/api/customer-portal";
 import { subscribe } from "@/lib/api/newsletter";
-import { formatCurrency } from "@/lib/utils";
 import type { Property } from "@/lib/api/types";
+import { formatCurrency } from "@/lib/utils";
 
 // Alternates a property spotlight with the brokerage speaking about itself —
 // mirrors the Glass Vault concept's hero exactly. Photography reuses the
@@ -170,8 +170,6 @@ export default function Lobby() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [images, setImages] = useState<Map<string, string | null>>(new Map());
   const [loading, setLoading] = useState(true);
-  const [newsletterEmail, setNewsletterEmail] = useState("");
-  const [subscribing, setSubscribing] = useState(false);
   const [slide, setSlide] = useState(0);
 
   useEffect(() => {
@@ -199,21 +197,6 @@ export default function Lobby() {
     );
     return () => clearInterval(id);
   }, []);
-
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newsletterEmail) return;
-    setSubscribing(true);
-    try {
-      await subscribe(newsletterEmail);
-      toast.success("Subscribed — welcome to the Curator's Digest.");
-      setNewsletterEmail("");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Could not subscribe.");
-    } finally {
-      setSubscribing(false);
-    }
-  };
 
   const available = useMemo(
     () => properties.filter((p) => p.status === "AVAILABLE"),
@@ -243,7 +226,9 @@ export default function Lobby() {
       else await removeFavorite(featuredProperty.id);
     } catch (err) {
       setFeaturedFav(!next);
-      toast.error(err instanceof Error ? err.message : "Could not update favorites.");
+      toast.error(
+        err instanceof Error ? err.message : "Could not update favorites.",
+      );
     }
   };
 
@@ -444,10 +429,16 @@ export default function Lobby() {
                 </span>
                 <button
                   onClick={handleToggleFeaturedFavorite}
-                  aria-label={featuredFav ? "Remove from saved properties" : "Save property"}
+                  aria-label={
+                    featuredFav
+                      ? "Remove from saved properties"
+                      : "Save property"
+                  }
                   className="absolute top-5 right-5 z-10 flex h-9.5 w-9.5 items-center justify-center rounded-full bg-[rgba(8,17,15,0.5)] text-white"
                 >
-                  <Heart className={`h-4 w-4 ${featuredFav ? "fill-red-500 text-red-500" : ""}`} />
+                  <Heart
+                    className={`h-4 w-4 ${featuredFav ? "fill-red-500 text-red-500" : ""}`}
+                  />
                 </button>
                 <div className="relative z-10 flex items-end justify-between gap-4 p-7">
                   <div>
@@ -628,43 +619,6 @@ export default function Lobby() {
             ))}
           </div>
         </div>
-      </section>
-
-      {/* Newsletter */}
-      <section className="w-full bg-primary">
-        <ScrollReveal className="container py-24">
-          <div className="w-full flex flex-wrap items-center justify-between gap-8">
-            <div className="">
-              <h2 className="font-serif text-2xl font-medium text-primary-foreground max-w-[22ch]">
-                The Curator&apos;s Digest
-              </h2>
-              <p className="mt-2 max-w-[34ch] text-sm text-primary-foreground/65">
-                Bi-weekly architectural and financial analysis, straight to your
-                inbox.
-              </p>
-            </div>
-            <form
-              onSubmit={handleSubscribe}
-              className="flex shrink-0 gap-2.5 max-sm:w-full max-sm:flex-col"
-            >
-              <input
-                type="email"
-                required
-                value={newsletterEmail}
-                onChange={(e) => setNewsletterEmail(e.target.value)}
-                placeholder="professional@email.com"
-                className="min-w-64 rounded-md border border-white/25 bg-transparent px-5 py-3.5 text-sm text-white placeholder:text-white/45 focus:border-gold focus:outline-none max-sm:min-w-0"
-              />
-              <button
-                type="submit"
-                disabled={subscribing}
-                className="whitespace-nowrap rounded-md bg-gold px-6.5 py-3.5 text-sm font-bold text-secondary-foreground transition-colors hover:bg-gold/90 disabled:opacity-60"
-              >
-                {subscribing ? "Subscribing…" : "Subscribe"}
-              </button>
-            </form>
-          </div>
-        </ScrollReveal>
       </section>
     </div>
   );

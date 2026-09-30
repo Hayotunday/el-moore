@@ -53,7 +53,8 @@ export default function Blog() {
     };
   }, []);
 
-  const handleSubscribe = async () => {
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (!email.trim()) return;
     setSubscribing(true);
     try {
@@ -361,22 +362,23 @@ export default function Blog() {
                 Receive our latest architectural and financial analysis directly in your inbox.
               </p>
             </div>
-            <div className="flex gap-2 w-full md:w-auto">
+            <form onSubmit={handleSubscribe} className="flex gap-2 w-full md:w-auto">
               <input
                 type="email"
+                required
                 placeholder="professional@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="border border-white/20 rounded-md px-4 py-2.5 text-sm bg-white/10 text-white placeholder:text-white/50 flex-1 md:w-64 focus:outline-none focus:ring-1 focus:ring-gold"
               />
               <button
-                onClick={handleSubscribe}
+                type="submit"
                 disabled={subscribing}
                 className="bg-gold text-secondary-foreground px-5 py-2.5 rounded-md text-sm font-semibold hover:opacity-90 transition-opacity active:scale-[0.97] whitespace-nowrap disabled:opacity-60"
               >
                 {subscribing ? "Subscribing…" : "Subscribe Now"}
               </button>
-            </div>
+            </form>
           </div>
         </ScrollReveal>
       </section>
