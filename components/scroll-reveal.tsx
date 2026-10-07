@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useSyncExternalStore } from "react";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -10,17 +10,19 @@ interface ScrollRevealProps {
   direction?: "up" | "left" | "right";
 }
 
+const emptySubscribe = () => () => {};
+
 export default function ScrollReveal({
   children,
   className = "",
   delay = 0,
   direction = "up",
 }: ScrollRevealProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
 
   const directionMap = {
     up: { y: 16, x: 0 },

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Heart, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -18,11 +18,19 @@ export default function PropertyCard({
 }) {
   const { user } = useAuth();
   const { open: openAuthDrawer } = useAuthDrawer();
-  const [fav, setFav] = useState(property.isFavorited ?? false);
+  const [favState, setFavState] = useState({
+    isFav: property.isFavorited ?? false,
+    propVal: property.isFavorited,
+  });
 
-  useEffect(() => {
-    setFav(property.isFavorited ?? false);
-  }, [property.isFavorited]);
+  if (property.isFavorited !== favState.propVal) {
+    setFavState({
+      isFav: property.isFavorited ?? false,
+      propVal: property.isFavorited,
+    });
+  }
+  const fav = favState.isFav;
+  const setFav = (val: boolean) => setFavState((prev) => ({ ...prev, isFav: val }));
 
   const handleToggleFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();

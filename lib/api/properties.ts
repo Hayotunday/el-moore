@@ -5,7 +5,6 @@ import {
   toPublicR2Url,
   R2_PUBLIC_BASE_URL,
 } from "./client";
-import { customerApiFetch } from "./customer-auth";
 import type { Property, PropertyImage, PropertyStatus, Sale } from "./types";
 
 export interface PropertyWithSale extends Property {

@@ -26,7 +26,6 @@ import { useAuth } from "@/contexts/auth-context";
 import { useAuthDrawer } from "@/contexts/auth-drawer-context";
 import { listPublicProperties, getPrimaryImages } from "@/lib/api/properties";
 import { addFavorite, removeFavorite } from "@/lib/api/customer-portal";
-import { subscribe } from "@/lib/api/newsletter";
 import type { Property } from "@/lib/api/types";
 import { formatCurrency } from "@/lib/utils";
 
@@ -207,10 +206,25 @@ export default function Lobby() {
   // Seeded from featuredProperty.isFavorited (listPublicProperties() attaches
   // it per-item for a signed-in customer), kept local so the heart flips
   // instantly on tap rather than waiting on a refetch.
-  const [featuredFav, setFeaturedFav] = useState(false);
-  useEffect(() => {
-    setFeaturedFav(featuredProperty?.isFavorited ?? false);
-  }, [featuredProperty?.id, featuredProperty?.isFavorited]);
+  const [featuredFavState, setFeaturedFavState] = useState({
+    isFav: featuredProperty?.isFavorited ?? false,
+    propId: featuredProperty?.id,
+    propVal: featuredProperty?.isFavorited,
+  });
+
+  if (
+    featuredProperty?.id !== featuredFavState.propId ||
+    featuredProperty?.isFavorited !== featuredFavState.propVal
+  ) {
+    setFeaturedFavState({
+      isFav: featuredProperty?.isFavorited ?? false,
+      propId: featuredProperty?.id,
+      propVal: featuredProperty?.isFavorited,
+    });
+  }
+  const featuredFav = featuredFavState.isFav;
+  const setFeaturedFav = (val: boolean) =>
+    setFeaturedFavState((prev) => ({ ...prev, isFav: val }));
 
   const handleToggleFeaturedFavorite = async (e: React.MouseEvent) => {
     e.preventDefault();

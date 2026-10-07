@@ -51,9 +51,23 @@ function ClaimAccountContent() {
 
   // Skip the email-entry step entirely when arriving with ?email= already set.
   useEffect(() => {
-    if (prefilledEmail) checkEmail(prefilledEmail);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!prefilledEmail) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const exists = await checkCustomerEmailExists(prefilledEmail);
+        if (!cancelled) setStep(exists ? "claim" : "not-found");
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : "Could not check that email.");
+          setStep("email");
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [prefilledEmail]);
 
   const handleCheckEmail = async (e: React.FormEvent) => {
     e.preventDefault();

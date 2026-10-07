@@ -17,15 +17,13 @@ export default function SavedProperties() {
   const { open: openAuthDrawer } = useAuthDrawer();
   const [properties, setProperties] = useState<Property[]>([]);
   const [images, setImages] = useState<Map<string, string | null>>(new Map());
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(Boolean(user));
 
   useEffect(() => {
     if (!user) {
-      setLoading(false);
       return;
     }
     let cancelled = false;
-    setLoading(true);
     listMyFavorites()
       .then(async (list) => {
         if (cancelled) return;

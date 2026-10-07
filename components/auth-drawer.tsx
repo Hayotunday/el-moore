@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { ArrowRight, Lock, Mail, Phone, ShieldCheck, User } from "lucide-react";
 import {
@@ -52,15 +52,18 @@ export default function AuthDrawer() {
    *  letting registerCustomer() fail on a duplicate-email error. */
   const [existingAccountEmail, setExistingAccountEmail] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!isOpen) return;
-    setStep("form");
-    setSignin(EMPTY_SIGNIN);
-    setSignup(EMPTY_SIGNUP);
-    setCode("");
-    setError(null);
-    setExistingAccountEmail(null);
-  }, [isOpen, view]);
+  const [prevOpenState, setPrevOpenState] = useState({ isOpen, view });
+  if (isOpen !== prevOpenState.isOpen || view !== prevOpenState.view) {
+    setPrevOpenState({ isOpen, view });
+    if (isOpen) {
+      setStep("form");
+      setSignin(EMPTY_SIGNIN);
+      setSignup(EMPTY_SIGNUP);
+      setCode("");
+      setError(null);
+      setExistingAccountEmail(null);
+    }
+  }
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();

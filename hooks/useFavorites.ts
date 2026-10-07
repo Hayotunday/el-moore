@@ -17,16 +17,13 @@ import { listMyFavorites } from "@/lib/api/customer-portal";
 export function useFavorites() {
   const { user } = useAuth();
   const [favorites, setFavorites] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(Boolean(user));
 
   useEffect(() => {
     if (!user) {
-      setFavorites([]);
-      setIsLoading(false);
       return;
     }
     let cancelled = false;
-    setIsLoading(true);
     listMyFavorites()
       .then((properties) => {
         if (!cancelled) setFavorites(properties.map((p) => p.id));

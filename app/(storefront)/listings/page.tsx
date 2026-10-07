@@ -5,7 +5,6 @@ import { useSearchParams } from "next/navigation";
 import PropertyCard from "@/components/property-cards";
 import ScrollReveal from "@/components/scroll-reveal";
 import {
-  listPublicProperties,
   listProperties,
   getPrimaryImages,
 } from "@/lib/api/properties";

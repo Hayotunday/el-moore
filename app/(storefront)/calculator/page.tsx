@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, Suspense } from "react";
+import { useState, useMemo, useSyncExternalStore, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   BarChart,
@@ -17,6 +17,7 @@ import ScrollReveal from "@/components/scroll-reveal";
 
 const holdOptions = [1, 3, 5, 7, 10];
 const ANNUAL_RATE = 0.15;
+const emptySubscribe = () => () => {};
 
 function CalculatorContent() {
   const searchParams = useSearchParams();
@@ -25,11 +26,11 @@ function CalculatorContent() {
     : 75000000;
   const [price, setPrice] = useState(initialPrice);
   const [holdYears, setHoldYears] = useState(5);
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const isClient = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
 
   const result = useMemo(() => {
     const futureValue = price * Math.pow(1 + ANNUAL_RATE, holdYears);

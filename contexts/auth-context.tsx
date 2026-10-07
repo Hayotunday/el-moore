@@ -62,8 +62,21 @@ function isTokenExpired(token: string): boolean {
 const USER_STORAGE_KEY = "el-moore-customer-user";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(() => {
+    if (typeof window === "undefined") return null;
+    const token = customerAuth.getCustomerToken();
+    const cachedUser = window.localStorage.getItem(USER_STORAGE_KEY);
+    if (token && cachedUser) {
+      try {
+        const parsed = JSON.parse(cachedUser);
+        if (isValidCachedUser(parsed)) {
+          return parsed;
+        }
+      } catch {}
+    }
+    return null;
+  });
+  const isLoading = false;
 
   useEffect(() => {
     const token = customerAuth.getCustomerToken();
@@ -73,8 +86,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const parsed = JSON.parse(cachedUser);
         if (isValidCachedUser(parsed)) {
-          setUser(parsed);
-
           // If the token is expired, trigger a silent refresh in background without clearing state eagerly
           if (isTokenExpired(token)) {
             customerAuth.refreshCustomerOnce().catch(() => {
@@ -90,7 +101,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         window.localStorage.removeItem(USER_STORAGE_KEY);
       }
     }
-    setIsLoading(false);
   }, []);
 
   // If a background request's silent token refresh fails (the refresh-token

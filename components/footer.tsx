@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { subscribe } from "@/lib/api/newsletter";
-import ScrollReveal from "@/components/scroll-reveal";
 
 // The management/marketer portal is a separate deployment (a separate repo)
 // as of the storefront/dashboard split — point this at its real deployed URL.
